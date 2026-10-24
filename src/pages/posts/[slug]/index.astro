@@ -2,6 +2,7 @@
 import { render } from "astro:content";
 import type { GetStaticPaths } from "astro";
 
+import Comments from "@/components/Comments.astro";
 import PostMeta from "@/components/PostMeta.astro";
 import StalePostWarning from "@/components/StalePostWarning.astro";
 import Layout from "@/layouts/Layout.astro";
@@ -44,5 +45,6 @@ const lastUpdated = post.data.updated ?? post.data.published;
     >
       <Content />
     </div>
+    <Comments />
   </article>
 </Layout>
