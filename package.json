@@ -14,7 +14,8 @@
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
     "lint": "oxlint",
-    "lint:fix": "oxlint --fix"
+    "lint:fix": "oxlint --fix",
+    "test": "node --experimental-strip-types --test src/lib/theme-boot.test.ts"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.3.4",
@@ -32,10 +33,12 @@
     "@astrojs/markdown-remark": "^7.3.3",
     "@iconify/json": "^2.2.541",
     "@iconify/tailwind4": "^1.2.3",
+    "@pagefind/component-ui": "^1.5.2",
     "@types/node": "^26.6.5",
     "astro-expressive-code": "^0.44.2",
     "oxfmt": "^0.72.0",
     "oxlint": "^1.87.0",
+    "pagefind": "^1.5.2",
     "rehype-autolink-headings": "^7.1.0",
     "rehype-external-links": "^3.0.0",
     "rehype-slug": "^6.0.0",

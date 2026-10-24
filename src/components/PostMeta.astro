@@ -16,6 +16,7 @@ type Props = {
 };
 
 const { post, variant } = Astro.props;
+const indexFilters = variant === "page";
 const author = getAuthor(post.data.author);
 const published = post.data.published;
 const updated = post.data.updated;
@@ -70,7 +71,9 @@ const updated = post.data.updated;
       <a href={categoryPath(post.data.category)} class="with-icon">
         <span class="icon-[mdi--folder-outline] text-base" aria-hidden="true"
         ></span>
-        {post.data.category}
+        <span data-pagefind-filter={indexFilters ? "カテゴリ" : undefined}>
+          {post.data.category}
+        </span>
       </a>
     </li>
     {
@@ -86,7 +89,9 @@ const updated = post.data.updated;
               class="icon-[mdi--tag-outline] text-base"
               aria-hidden="true"
             />
-            {tag}
+            <span data-pagefind-filter={indexFilters ? "タグ" : undefined}>
+              {tag}
+            </span>
           </a>
         </li>
       ))

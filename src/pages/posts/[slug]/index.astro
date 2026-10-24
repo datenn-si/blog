@@ -8,7 +8,7 @@ import Layout from "@/layouts/Layout.astro";
 import { getPosts, postDescription } from "@/lib/posts";
 import "@/styles/article.css";
 import "remark-github-alerts/styles/github-colors-light.css";
-import "remark-github-alerts/styles/github-colors-dark-media.css";
+import "remark-github-alerts/styles/github-colors-dark-class.css";
 import "remark-github-alerts/styles/github-base.css";
 
 export const getStaticPaths = (async () => {
@@ -32,12 +32,15 @@ const lastUpdated = post.data.updated ?? post.data.published;
 >
   <article class="mx-auto w-full max-w-3xl px-4 py-8">
     <div>
-      <h1 class="text-2xl font-bold">{post.data.title}</h1>
+      <h1 class="text-2xl font-bold" data-pagefind-meta="title">
+        {post.data.title}
+      </h1>
       <StalePostWarning date={lastUpdated} />
       <PostMeta post={post} variant="page" />
     </div>
     <div
       class="prose prose-sm mt-6 max-w-none text-ink dark:prose-invert [--tw-prose-body:var(--color-ink)] [--tw-prose-headings:var(--color-ink)] [--tw-prose-counters:var(--color-ink)] [--tw-prose-bullets:var(--color-ink)] [--tw-prose-links:var(--color-accent)]"
+      data-pagefind-body
     >
       <Content />
     </div>

@@ -1,17 +1,93 @@
 ---
+// @ts-expect-error Pagefind exposes this stylesheet without a TypeScript declaration.
+import "@pagefind/component-ui/css";
+
 import { navigationItems, siteConfig } from "@/constants";
+
+const themeOptions = [
+  { value: "auto", label: "自動", icon: "icon-[mdi--theme-light-dark]" },
+  { value: "light", label: "ライト", icon: "icon-[mdi--white-balance-sunny]" },
+  { value: "dark", label: "ダーク", icon: "icon-[mdi--weather-night]" },
+] as const;
 ---
 
 <header class="h-12 border-b border-line bg-surface">
   <div
-    class="mx-auto flex h-full w-full max-w-3xl items-center justify-between gap-4 px-4"
+    class="mx-auto flex h-full w-full max-w-3xl items-center gap-1 px-4 md:gap-4"
   >
-    <a href="/" class="font-bold text-ink">{siteConfig.siteName}</a>
+    <a href="/" class="mr-auto font-bold text-ink">{siteConfig.siteName}</a>
+    <div class="order-1 flex items-center md:order-3">
+      <div class="relative">
+        <button
+          id="search-button"
+          type="button"
+          class="grid size-9 place-items-center"
+          aria-haspopup="dialog"
+          aria-describedby="search-tooltip"
+          aria-label="検索"
+        >
+          <span class="icon-[mdi--magnify] text-2xl" aria-hidden="true"></span>
+        </button>
+        <span id="search-tooltip" class="theme-tooltip" role="tooltip"
+          >検索</span
+        >
+      </div>
+      <div class="theme relative">
+        <button
+          type="button"
+          class="theme-button relative z-[70] grid size-9 place-items-center"
+          aria-expanded="false"
+          aria-controls="theme-menu"
+          aria-haspopup="menu"
+          aria-describedby="theme-tooltip"
+          aria-label="カラーモード"
+        >
+          {
+            themeOptions.map((option) => (
+              <span
+                class:list={[option.icon, "theme-icon text-2xl"]}
+                data-theme-icon={option.value}
+                aria-hidden="true"
+              />
+            ))
+          }
+        </button>
+        <span id="theme-tooltip" class="theme-tooltip" role="tooltip"
+          >カラーモード</span
+        >
+        <div class="theme-backdrop fixed inset-0 z-[60]" hidden></div>
+        <div
+          id="theme-menu"
+          class="theme-menu absolute top-[calc(100%+0.25rem)] right-0 z-[70] flex min-w-36 flex-col rounded-control border border-line bg-surface p-1 text-ink shadow-md"
+          role="menu"
+          aria-label="カラーモード"
+          hidden
+        >
+          {
+            themeOptions.map((option) => (
+              <button
+                type="button"
+                role="menuitemradio"
+                class="theme-option flex w-full items-center gap-2 rounded-control px-3 py-2 text-left"
+                data-theme-value={option.value}
+                aria-checked="false"
+              >
+                <span
+                  class:list={[option.icon, "text-lg"]}
+                  aria-hidden="true"
+                />
+                {option.label}
+              </button>
+            ))
+          }
+        </div>
+      </div>
+    </div>
     <button
       type="button"
       popovertarget="site-navigation"
       aria-label="ナビゲーションを開閉"
-      class="menu-toggle grid size-9 place-items-center md:hidden"
+      class="menu-toggle order-2 grid size-9 place-items-center md:hidden"
     >
       <span class="menu-open icon-[mdi--menu] text-2xl" aria-hidden="true"
       ></span>
@@ -22,7 +98,7 @@ import { navigationItems, siteConfig } from "@/constants";
       id="site-navigation"
       popover="auto"
       aria-label="ナビゲーション"
-      class="fixed inset-x-0 top-12 z-50 m-0 flex h-[calc(100dvh-3rem)] w-full max-w-none flex-col items-stretch gap-0 overflow-y-auto border-0 border-t border-line bg-surface px-4 py-4 text-ink shadow-none md:static md:ml-auto md:w-auto md:flex-row md:items-center md:gap-4 md:overflow-visible md:border-0 md:bg-transparent md:p-0"
+      class="fixed inset-x-0 top-12 z-50 m-0 flex h-[calc(100dvh-3rem)] w-full max-w-none flex-col items-stretch gap-0 overflow-y-auto border-0 border-t border-line bg-surface px-4 py-4 text-ink shadow-none md:static md:order-2 md:w-auto md:flex-row md:items-center md:gap-4 md:overflow-visible md:border-0 md:bg-transparent md:p-0"
     >
       {
         navigationItems.map((item) => (
@@ -36,11 +112,45 @@ import { navigationItems, siteConfig } from "@/constants";
       }
     </nav>
   </div>
+  <pagefind-config bundle-path="/pagefind/"></pagefind-config>
+  <pagefind-modal>
+    <pagefind-modal-header>
+      <pagefind-input></pagefind-input>
+    </pagefind-modal-header>
+    <pagefind-modal-body>
+      <pagefind-summary></pagefind-summary>
+      <div class="mb-2 flex flex-wrap gap-2">
+        <pagefind-filter-dropdown filter="カテゴリ" label="カテゴリ"
+        ></pagefind-filter-dropdown>
+        <pagefind-filter-dropdown filter="タグ" label="タグ"
+        ></pagefind-filter-dropdown>
+      </div>
+      <pagefind-results></pagefind-results>
+    </pagefind-modal-body>
+    <pagefind-modal-footer>
+      <pagefind-keyboard-hints></pagefind-keyboard-hints>
+    </pagefind-modal-footer>
+  </pagefind-modal>
 </header>
 
+<script>
+  import "@pagefind/component-ui";
+  import { initSearch } from "@/scripts/search";
+  import { initTheme } from "@/scripts/theme";
+
+  initTheme();
+  initSearch();
+</script>
+
 <style>
-  :global(html:has(#site-navigation:popover-open)) {
+  :global(html:has(#site-navigation:popover-open)),
+  :global(html:has(.theme-menu:not([hidden]))) {
     overflow: hidden;
+  }
+
+  pagefind-modal:not(:defined),
+  pagefind-config:not(:defined) {
+    display: none;
   }
 
   .menu-close {
@@ -63,5 +173,86 @@ import { navigationItems, siteConfig } from "@/constants";
     #site-navigation:not(:popover-open) {
       display: flex;
     }
+  }
+
+  .theme-icon {
+    display: none;
+  }
+
+  :global(html[data-theme="light"]) .theme-icon[data-theme-icon="light"],
+  :global(html[data-theme="dark"]) .theme-icon[data-theme-icon="dark"],
+  :global(html:not([data-theme="light"]):not([data-theme="dark"]))
+    .theme-icon[data-theme-icon="auto"] {
+    display: block;
+  }
+
+  .theme-tooltip {
+    position: absolute;
+    z-index: 70;
+    top: calc(100% + 0.25rem);
+    right: 0;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-control);
+    background: var(--highlight);
+    color: var(--highlight-ink);
+    font-size: 0.75rem;
+    line-height: 1.25;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .theme-button:hover + .theme-tooltip,
+    .theme-button:focus-visible + .theme-tooltip,
+    #search-button:hover + .theme-tooltip,
+    #search-button:focus-visible + .theme-tooltip {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  header:has(:global(dialog.pf-modal[open])) #search-tooltip {
+    display: none;
+  }
+
+  @media (hover: none) {
+    pagefind-modal-footer {
+      display: none !important;
+    }
+
+    pagefind-modal-body {
+      border-bottom-left-radius: 12px !important;
+      border-bottom-right-radius: 12px !important;
+    }
+  }
+
+  :global(dialog.pf-modal .pf-dropdown-menu) {
+    max-height: min(17.5rem, 50dvh) !important;
+  }
+
+  .theme:has(.theme-menu:not([hidden])) .theme-tooltip {
+    display: none;
+  }
+
+  .theme-option {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .theme-option:hover,
+  .theme-option:focus-visible {
+    background: color-mix(in srgb, var(--ink) 8%, transparent);
+  }
+
+  .theme-option[aria-checked="true"],
+  .theme-option[aria-checked="true"]:hover,
+  .theme-option[aria-checked="true"]:focus-visible {
+    background: var(--highlight);
+    color: var(--highlight-ink);
   }
 </style>

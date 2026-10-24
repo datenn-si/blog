@@ -1,4 +1,6 @@
 // @ts-check
+import { spawn } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { defineConfig, fontProviders } from 'astro/config';
 
 import cloudflare from '@astrojs/cloudflare';
@@ -17,6 +19,28 @@ import remarkGithubAlerts from 'remark-github-alerts';
 
 import { siteConfig } from '@/constants';
 import { ogImageIntegration } from '@/lib/og-image';
+
+const pagefindBin = fileURLToPath(new URL('./runner/bin.cjs', import.meta.resolve('pagefind')));
+
+/** @returns {import('astro').AstroIntegration} */
+function pagefindIntegration() {
+  return {
+    name: 'pagefind',
+    hooks: {
+      'astro:build:done': ({ dir }) =>
+        new Promise((resolve, reject) => {
+          const child = spawn(process.execPath, [pagefindBin, '--site', fileURLToPath(dir)], {
+            stdio: 'inherit',
+          });
+          child.on('error', reject);
+          child.on('exit', (code) => {
+            if (code === 0) resolve();
+            else reject(new Error(`pagefind exited with ${code}`));
+          });
+        }),
+    },
+  };
+}
 
 /** @type {import('@astrojs/markdown-remark').RemarkPlugin<[]>} */
 const addNotProseToLinkCards = () => (tree) => {
@@ -135,12 +159,15 @@ export default defineConfig({
   integrations: [
     ogImageIntegration,
     expressiveCode({
-      themes: ['github-dark', 'github-light'],
+      themes: ['github-light', 'github-dark'],
+      useDarkModeMediaQuery: false,
+      themeCssSelector: (theme) => (theme.type === 'dark' ? '.dark' : false),
       defaultProps: {
         wrap: true,
       },
     }),
     mdx(),
     sitemap(),
+    pagefindIntegration(),
   ],
 });

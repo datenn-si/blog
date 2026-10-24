@@ -2,6 +2,7 @@
 @plugin "@iconify/tailwind4";
 @plugin "@tailwindcss/typography";
 
+@custom-variant dark (&:where(.dark, .dark *));
 @custom-variant touch (@media (hover: none) and (pointer: coarse));
 
 :root {
@@ -18,20 +19,18 @@
   color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --canvas: #0c0a09;
-    --surface: #1c1917;
-    --ink: #fafaf9;
-    --muted: #a8a29e;
-    --line: #44403c;
-    --accent: #93c5fd;
-    --warning: #451a03;
-    --warning-ink: #fde68a;
-    --highlight: #fafaf9;
-    --highlight-ink: #1c1917;
-    color-scheme: dark;
-  }
+html.dark {
+  --canvas: #0c0a09;
+  --surface: #1c1917;
+  --ink: #fafaf9;
+  --muted: #a8a29e;
+  --line: #44403c;
+  --accent: #93c5fd;
+  --warning: #451a03;
+  --warning-ink: #fde68a;
+  --highlight: #fafaf9;
+  --highlight-ink: #1c1917;
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -56,4 +55,36 @@ a {
 
 .with-icon {
   @apply inline-flex items-center gap-0.5;
+}
+
+:root:root {
+  --pf-text: var(--ink);
+  --pf-text-secondary: var(--muted);
+  --pf-text-muted: var(--muted);
+  --pf-background: var(--surface);
+  --pf-border: var(--line);
+  --pf-border-focus: var(--muted);
+  --pf-hover: color-mix(in srgb, var(--ink) 6%, transparent);
+  --pf-mark: var(--accent);
+  --pf-skeleton: var(--line);
+  --pf-skeleton-shine: var(--surface);
+  --pf-scroll-shadow: rgb(0 0 0 / 0.08);
+  --pf-shadow-sm: 0 2px 8px rgb(0 0 0 / 0.06);
+  --pf-shadow-md: 0 4px 12px rgb(0 0 0 / 0.1);
+  --pf-shadow-lg: 0 16px 48px rgb(0 0 0 / 0.2);
+  --pf-error-bg: var(--warning);
+  --pf-error-border: var(--line);
+  --pf-error-text: var(--warning-ink);
+  --pf-error-text-secondary: var(--warning-ink);
+  --pf-outline-focus: var(--accent);
+  --pf-font: var(--font-noto-sans-jp), sans-serif;
+  --pf-border-radius: var(--radius-control);
+  --pf-modal-backdrop: color-mix(in srgb, var(--ink) 40%, transparent);
+}
+
+html.dark:root {
+  --pf-scroll-shadow: rgb(255 255 255 / 0.08);
+  --pf-shadow-sm: 0 2px 8px rgb(0 0 0 / 0.35);
+  --pf-shadow-md: 0 4px 12px rgb(0 0 0 / 0.45);
+  --pf-shadow-lg: 0 16px 48px rgb(0 0 0 / 0.55);
 }
