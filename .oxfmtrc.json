@@ -1,0 +1,5 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "singleQuote": true,
+  "ignorePatterns": ["node_modules", "dist", "**/*.min.js", "worker-configuration.d.ts"]
+}

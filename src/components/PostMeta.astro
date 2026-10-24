@@ -1,0 +1,118 @@
+---
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+
+import { getAuthor } from "@/constants";
+import {
+  categoryPath,
+  formatPostDate,
+  formatPostDateIso,
+  tagPath,
+} from "@/lib/posts";
+
+type Props = {
+  post: CollectionEntry<"posts">;
+  variant: "page" | "card";
+};
+
+const { post, variant } = Astro.props;
+const author = getAuthor(post.data.author);
+const published = post.data.published;
+const updated = post.data.updated;
+---
+
+<div class="meta">
+  <p class="meta-line">
+    <span class="with-icon">
+      <span class="icon-[mdi--calendar] text-base" aria-hidden="true"></span>
+      <time datetime={formatPostDateIso(published)}
+        >{formatPostDate(published)}</time
+      >
+    </span>
+    {
+      updated && (
+        <span class="with-icon">
+          (
+          <span
+            class="icon-[mdi--calendar-edit] text-base"
+            aria-hidden="true"
+          />
+          <time datetime={formatPostDateIso(updated)}>
+            {formatPostDate(updated)}
+          </time>
+          )
+        </span>
+      )
+    }
+    <span class="with-icon">
+      {
+        author && (
+          <Image
+            src={author.icon}
+            alt=""
+            width={40}
+            height={40}
+            loading="eager"
+            class="size-5 rounded-full object-cover"
+          />
+        )
+      }
+      <span>{author?.name ?? post.data.author}</span>
+    </span>
+  </p>
+  <ul class="tags">
+    <li
+      class:list={[
+        "px-2 py-1 rounded-control border border-line",
+        variant === "card" && "tag-above",
+      ]}
+    >
+      <a href={categoryPath(post.data.category)} class="with-icon">
+        <span class="icon-[mdi--folder-outline] text-base" aria-hidden="true"
+        ></span>
+        {post.data.category}
+      </a>
+    </li>
+    {
+      post.data.tags.map((tag) => (
+        <li
+          class:list={[
+            "px-2 py-1 rounded-control border border-line",
+            variant === "card" && "tag-above",
+          ]}
+        >
+          <a href={tagPath(tag)} class="with-icon">
+            <span
+              class="icon-[mdi--tag-outline] text-base"
+              aria-hidden="true"
+            />
+            {tag}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  @reference "@/styles/global.css";
+
+  .meta {
+    @apply mt-3 flex flex-col gap-2 text-muted;
+  }
+
+  .meta-line,
+  .tags {
+    @apply flex flex-wrap items-center;
+  }
+  .meta-line {
+    @apply gap-x-3 gap-y-1;
+  }
+  .tags {
+    @apply gap-1;
+  }
+
+  .tag-above {
+    @apply relative z-10;
+  }
+</style>

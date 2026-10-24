@@ -1,0 +1,69 @@
+---
+type Props = {
+  title: string;
+  description?: string;
+  ogImagePath?: string;
+  noIndex?: boolean;
+};
+
+import { Font } from "astro:assets";
+
+import "@/styles/global.css";
+import { siteConfig } from "@/constants";
+
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+
+const { title, description, ogImagePath, noIndex } = Astro.props;
+
+const titleTemplate =
+  Astro.url.pathname === "/" ? title : `${title} | ${siteConfig.siteName}`;
+const ogImageUrl = new URL(
+  ogImagePath || siteConfig.siteDefaultOGImagePath,
+  siteConfig.siteUrl,
+).toString();
+---
+
+<html lang="ja" prefix="og: https://ogp.me/ns#">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="だてんし" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{titleTemplate}</title>
+    <meta
+      name="description"
+      content={description || siteConfig.siteDefaultDescription}
+    />
+    <link rel="canonical" href={Astro.url.href} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:site_name" content={siteConfig.siteName} />
+    <meta property="og:title" content={titleTemplate} /><meta
+      property="og:description"
+      content={description || siteConfig.siteDefaultDescription}
+    />
+    <meta
+      property="og:type"
+      content={Astro.url.pathname === "/" ? "website" : "article"}
+    />
+    <meta property="og:url" content={Astro.url.href} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:card" content={siteConfig.twitterCardType} />
+    <meta name="twitter:site" content={`@${siteConfig.twitterUserName}`} />
+    {noIndex && <meta name="robots" content="noindex" />}
+
+    <Font cssVariable="--font-noto-sans-jp" />
+  </head>
+  <body class="flex min-h-screen flex-col bg-canvas font-sans text-sm text-ink">
+    <Header />
+    <main class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

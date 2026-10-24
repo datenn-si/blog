@@ -1,0 +1,24 @@
+---
+import type { GetStaticPaths } from "astro";
+
+import PostList from "@/components/PostList.astro";
+import { postsPerPage, siteConfig } from "@/constants";
+import Layout from "@/layouts/Layout.astro";
+import { getPosts, pageDocumentTitle } from "@/lib/posts";
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = await getPosts();
+  return paginate(posts, { pageSize: postsPerPage });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+const heading = "投稿一覧";
+const title =
+  page.currentPage === 1
+    ? siteConfig.siteName
+    : pageDocumentTitle(heading, page.currentPage);
+---
+
+<Layout title={title} description={siteConfig.siteDefaultDescription}>
+  <PostList heading={heading} page={page} />
+</Layout>

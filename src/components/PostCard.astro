@@ -1,0 +1,51 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+import PostMeta from "@/components/PostMeta.astro";
+import { postDescription, postPath } from "@/lib/posts";
+
+type Props = {
+  post: CollectionEntry<"posts">;
+};
+
+const { post } = Astro.props;
+const description = postDescription(post);
+const href = postPath(post.id);
+---
+
+<article class="card">
+  <h2 class="card-title">
+    <a href={href} class="card-link">{post.data.title}</a>
+  </h2>
+  {description && <p class="card-description">{description}</p>}
+  <PostMeta post={post} variant="card" />
+</article>
+
+<style>
+  @reference "@/styles/global.css";
+
+  .card {
+    @apply relative rounded-card border border-line bg-surface p-4;
+  }
+
+  .card:has(:focus-visible) {
+    @apply outline-2 outline-offset-2 outline-accent;
+  }
+
+  .card-title {
+    @apply text-lg font-bold text-ink;
+  }
+
+  .card-link::before {
+    content: "";
+    @apply absolute inset-0 z-0;
+  }
+
+  .card-link:focus-visible {
+    @apply outline-none;
+  }
+
+  .card-description {
+    @apply mt-2 text-muted;
+  }
+</style>

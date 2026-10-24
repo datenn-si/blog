@@ -1,0 +1,9 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "env": {
+    "astro": true,
+    "browser": true,
+    "es2026": true
+  },
+  "ignorePatterns": ["node_modules", "dist", "**/*.min.js"]
+}

@@ -1,0 +1,27 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { categoryPath, countCategories, getPosts } from "@/lib/posts";
+
+const posts = await getPosts();
+const categories = countCategories(posts);
+---
+
+<Layout title="カテゴリ" description="投稿のカテゴリ一覧です。">
+  <section class="mx-auto w-full max-w-3xl px-4 py-8">
+    <h1 class="text-2xl font-bold">カテゴリ</h1>
+    {
+      categories.length === 0 ? (
+        <p class="mt-6 text-muted">カテゴリはまだありません。</p>
+      ) : (
+        <ul class="mt-6 flex flex-col gap-2">
+          {categories.map((item) => (
+            <li>
+              <a href={categoryPath(item.category)}>{item.category}</a>
+              <span class="text-muted"> ({item.count})</span>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </section>
+</Layout>

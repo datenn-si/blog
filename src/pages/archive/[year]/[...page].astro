@@ -1,0 +1,34 @@
+---
+import type { GetStaticPaths } from "astro";
+
+import PostList from "@/components/PostList.astro";
+import { postsPerPage } from "@/constants";
+import Layout from "@/layouts/Layout.astro";
+import {
+  getPosts,
+  groupArchive,
+  pageDocumentTitle,
+  postsInYear,
+} from "@/lib/posts";
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = await getPosts();
+  return groupArchive(posts).flatMap((yearGroup) =>
+    paginate(postsInYear(posts, yearGroup.year), {
+      params: { year: String(yearGroup.year) },
+      props: { year: yearGroup.year },
+      pageSize: postsPerPage,
+    }),
+  );
+}) satisfies GetStaticPaths;
+
+const { page, year } = Astro.props;
+const heading = `${year}年`;
+---
+
+<Layout
+  title={pageDocumentTitle(heading, page.currentPage)}
+  description={`${year}年の投稿一覧です。`}
+>
+  <PostList heading={heading} page={page} />
+</Layout>

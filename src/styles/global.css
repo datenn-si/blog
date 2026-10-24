@@ -1,0 +1,59 @@
+@import 'tailwindcss';
+@plugin "@iconify/tailwind4";
+@plugin "@tailwindcss/typography";
+
+@custom-variant touch (@media (hover: none) and (pointer: coarse));
+
+:root {
+  --canvas: #fafaf9;
+  --surface: #ffffff;
+  --ink: #1c1917;
+  --muted: #57534e;
+  --line: #e7e5e4;
+  --accent: #1d4ed8;
+  --warning: #fffbeb;
+  --warning-ink: #92400e;
+  --highlight: #1c1917;
+  --highlight-ink: #fafaf9;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --canvas: #0c0a09;
+    --surface: #1c1917;
+    --ink: #fafaf9;
+    --muted: #a8a29e;
+    --line: #44403c;
+    --accent: #93c5fd;
+    --warning: #451a03;
+    --warning-ink: #fde68a;
+    --highlight: #fafaf9;
+    --highlight-ink: #1c1917;
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --font-sans: var(--font-noto-sans-jp);
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-warning: var(--warning);
+  --color-warning-ink: var(--warning-ink);
+  --color-highlight: var(--highlight);
+  --color-highlight-ink: var(--highlight-ink);
+  --radius-card: 0.75rem;
+  --radius-control: 0.375rem;
+}
+
+a {
+  @apply hover:text-accent;
+}
+
+.with-icon {
+  @apply inline-flex items-center gap-0.5;
+}

@@ -1,0 +1,34 @@
+---
+import type { GetStaticPaths } from "astro";
+
+import PostList from "@/components/PostList.astro";
+import { postsPerPage } from "@/constants";
+import Layout from "@/layouts/Layout.astro";
+import {
+  countCategories,
+  getPosts,
+  pageDocumentTitle,
+  postsWithCategory,
+} from "@/lib/posts";
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = await getPosts();
+  return countCategories(posts).flatMap((item) =>
+    paginate(postsWithCategory(posts, item.category), {
+      params: { category: item.category },
+      props: { category: item.category },
+      pageSize: postsPerPage,
+    }),
+  );
+}) satisfies GetStaticPaths;
+
+const { page, category } = Astro.props;
+const heading = `カテゴリ「${category}」`;
+---
+
+<Layout
+  title={pageDocumentTitle(heading, page.currentPage)}
+  description={`${category} カテゴリの記事一覧です。`}
+>
+  <PostList heading={heading} page={page} />
+</Layout>

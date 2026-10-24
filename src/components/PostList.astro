@@ -1,0 +1,32 @@
+---
+import type { Page } from 'astro';
+
+import Pagination from '@/components/Pagination.astro';
+import PostCard from '@/components/PostCard.astro';
+import type { Post } from '@/lib/posts';
+
+type Props = {
+  heading: string;
+  page: Page<Post>;
+};
+
+const { heading, page } = Astro.props;
+---
+
+<section class="mx-auto flex w-full max-w-3xl flex-col px-4 py-8">
+  <h1 class="text-2xl font-bold">{heading}</h1>
+  {
+    page.data.length === 0 ? (
+      <p class="mt-6 text-muted">投稿はまだありません。</p>
+    ) : (
+      <ul class="mt-6 flex flex-col gap-4">
+        {page.data.map((post) => (
+          <li>
+            <PostCard post={post} />
+          </li>
+        ))}
+      </ul>
+    )
+  }
+  <Pagination page={page} />
+</section>

@@ -1,0 +1,50 @@
+---
+type Props = {
+  date: Date;
+};
+
+const { date } = Astro.props;
+---
+
+<stale-post-warning data-date={date.toISOString()} hidden role="note">
+  <p>
+    この記事は最終更新から<span data-years>1</span>年以上経過しています。内容が現在の状況と異なる可能性があります。
+  </p>
+</stale-post-warning>
+
+<script>
+  class StalePostWarning extends HTMLElement {
+    connectedCallback() {
+      const raw = this.dataset.date;
+      if (!raw) return;
+
+      const updated = new Date(raw);
+      if (Number.isNaN(updated.getTime())) return;
+
+      const limit = new Date(updated.getTime());
+      limit.setFullYear(limit.getFullYear() + 1);
+      const now = new Date();
+      if (now.getTime() < limit.getTime()) return;
+
+      let years = now.getFullYear() - updated.getFullYear();
+      const anniversary = new Date(updated.getTime());
+      anniversary.setFullYear(anniversary.getFullYear() + years);
+      if (now.getTime() < anniversary.getTime()) years -= 1;
+
+      this.querySelector('[data-years]')?.replaceChildren(String(years));
+      this.hidden = false;
+    }
+  }
+
+  if (!customElements.get('stale-post-warning')) {
+    customElements.define('stale-post-warning', StalePostWarning);
+  }
+</script>
+
+<style>
+  @reference "@/styles/global.css";
+
+  stale-post-warning:not([hidden]) {
+    @apply mt-4 block rounded-control border border-line bg-warning px-3 py-2 text-warning-ink;
+  }
+</style>

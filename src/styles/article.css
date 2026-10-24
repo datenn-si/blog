@@ -1,0 +1,101 @@
+@reference "./global.css";
+
+.prose :not(pre) > code {
+  @apply rounded-control bg-line px-1 py-0.5 font-normal text-ink before:content-none after:content-none;
+}
+
+.prose .toc-shell {
+  @apply my-6 overflow-hidden rounded-card border border-line bg-surface/90;
+}
+
+.prose .toc-summary {
+  @apply flex cursor-pointer list-none items-center gap-2 bg-line/30 px-4 py-3 font-bold text-ink;
+}
+
+.prose .toc-summary::-webkit-details-marker {
+  @apply hidden;
+}
+
+.prose .toc-chevron {
+  @apply ml-auto text-lg transition-transform duration-150;
+}
+
+.prose .toc-shell:not([open]) .toc-chevron {
+  @apply -rotate-180;
+}
+
+.prose .toc {
+  @apply m-0 px-4 pt-2 pb-4;
+}
+
+.prose :not(.toc) > .toc-list {
+  @apply m-0 pl-5;
+}
+
+.prose .toc-item {
+  @apply my-1;
+}
+
+.prose .toc-link {
+  @apply text-ink no-underline hover:text-accent;
+}
+
+.prose .heading-anchor {
+  @apply ml-[0.4em] inline-flex align-middle text-muted opacity-0 no-underline transition-opacity hover:text-accent focus-visible:text-accent focus-visible:opacity-100 touch:opacity-100;
+}
+
+.prose :is(h1, h2, h3, h4, h5, h6):hover > .heading-anchor {
+  @apply opacity-100;
+}
+
+.prose .remark-link-card-plus__container {
+  @apply my-6;
+}
+
+.prose .remark-link-card-plus__card {
+  @apply flex min-h-32 overflow-hidden rounded-card border border-line bg-surface text-ink no-underline hover:text-accent;
+}
+
+.prose .remark-link-card-plus__main {
+  @apply flex min-w-0 flex-1 flex-col justify-between gap-3 p-4;
+}
+
+.prose .remark-link-card-plus__content {
+  @apply grid gap-1.5;
+}
+
+.prose .remark-link-card-plus__title {
+  @apply font-bold leading-[1.4];
+}
+
+.prose .remark-link-card-plus__description {
+  @apply line-clamp-2 overflow-hidden text-sm leading-normal text-muted;
+}
+
+.prose .remark-link-card-plus__meta {
+  @apply flex items-center gap-1.5 text-xs text-muted;
+}
+
+.prose .remark-link-card-plus__favicon {
+  @apply size-4 object-contain;
+}
+
+.prose .remark-link-card-plus__url {
+  @apply overflow-hidden text-ellipsis whitespace-nowrap;
+}
+
+.prose .remark-link-card-plus__thumbnail {
+  @apply w-[30%] max-w-55 flex-[0_0_30%] bg-line;
+}
+
+.prose .remark-link-card-plus__image {
+  @apply block size-full object-cover;
+}
+
+.prose .ec {
+  @apply mt-6 mb-0;
+}
+
+.prose .ec .frame {
+  @apply rounded-card;
+}

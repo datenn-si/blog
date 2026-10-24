@@ -1,0 +1,45 @@
+---
+import { render } from "astro:content";
+import type { GetStaticPaths } from "astro";
+
+import PostMeta from "@/components/PostMeta.astro";
+import StalePostWarning from "@/components/StalePostWarning.astro";
+import Layout from "@/layouts/Layout.astro";
+import { getPosts, postDescription } from "@/lib/posts";
+import "@/styles/article.css";
+import "remark-github-alerts/styles/github-colors-light.css";
+import "remark-github-alerts/styles/github-colors-dark-media.css";
+import "remark-github-alerts/styles/github-base.css";
+
+export const getStaticPaths = (async () => {
+  const posts = await getPosts();
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}) satisfies GetStaticPaths;
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const description = postDescription(post);
+const lastUpdated = post.data.updated ?? post.data.published;
+---
+
+<Layout
+  title={post.data.title}
+  description={description || undefined}
+  ogImagePath={`/posts/${encodeURIComponent(post.id)}/og-image.png`}
+>
+  <article class="mx-auto w-full max-w-3xl px-4 py-8">
+    <div>
+      <h1 class="text-2xl font-bold">{post.data.title}</h1>
+      <StalePostWarning date={lastUpdated} />
+      <PostMeta post={post} variant="page" />
+    </div>
+    <div
+      class="prose prose-sm mt-6 max-w-none text-ink dark:prose-invert [--tw-prose-body:var(--color-ink)] [--tw-prose-headings:var(--color-ink)] [--tw-prose-counters:var(--color-ink)] [--tw-prose-bullets:var(--color-ink)] [--tw-prose-links:var(--color-accent)]"
+    >
+      <Content />
+    </div>
+  </article>
+</Layout>
