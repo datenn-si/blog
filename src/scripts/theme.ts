@@ -9,6 +9,14 @@ export function initTheme(): void {
 
   const options = [...menu.querySelectorAll<HTMLButtonElement>('[data-theme-value]')];
   const media = matchMedia('(prefers-color-scheme: dark)');
+  const pageScrollKeys = new Set(['PageUp', 'PageDown', 'Home', 'End', 'ArrowUp', 'ArrowDown']);
+
+  function preventScroll(event: WheelEvent | TouchEvent): void {
+    if (!menu.hidden) event.preventDefault();
+  }
+
+  document.addEventListener('wheel', preventScroll, { passive: false });
+  document.addEventListener('touchmove', preventScroll, { passive: false });
 
   function storedTheme(): string | null {
     try {
@@ -62,7 +70,12 @@ export function initTheme(): void {
   document.addEventListener(
     'keydown',
     (event) => {
-      if (event.key !== 'Escape' || menu.hidden) return;
+      if (menu.hidden) return;
+      if (pageScrollKeys.has(event.key)) {
+        event.preventDefault();
+        return;
+      }
+      if (event.key !== 'Escape') return;
       event.preventDefault();
       event.stopPropagation();
       close(true);

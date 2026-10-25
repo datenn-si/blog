@@ -1,6 +1,6 @@
 {
   "name": "blog",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -15,7 +15,7 @@
     "fmt:check": "oxfmt --check",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
-    "test": "node --experimental-strip-types --test src/lib/theme-boot.test.ts src/scripts/comments.test.ts"
+    "test": "node --experimental-strip-types --test"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.3.4",
@@ -26,6 +26,7 @@
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.3.8",
     "budoux": "^0.9.3",
+    "photoswipe": "^5.4.4",
     "satori": "^0.62.0",
     "tailwindcss": "^4.3.3"
   },
