@@ -2,5 +2,17 @@
   "files.associations": {
     "*.css": "tailwindcss"
   },
-  "cSpell.words": ["frontmatter", "giscus", "iconify", "noto"]
+  "cSpell.words": [
+    "frontmatter",
+    "giscus",
+    "iconify",
+    "msrc",
+    "noopener",
+    "noreferrer",
+    "noto",
+    "pagefind",
+    "photoswipe",
+    "pswp",
+    "xlink"
+  ]
 }

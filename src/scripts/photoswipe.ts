@@ -1,7 +1,7 @@
 import PhotoSwipe from 'photoswipe';
 import 'photoswipe/style.css';
 
-const article = document.querySelector<HTMLElement>('[data-pagefind-body]');
+const article = document.querySelector<HTMLElement>('.prose');
 let openingPointerType = 'mouse';
 
 function openImage(image: HTMLImageElement, pointerType: string) {
@@ -11,6 +11,8 @@ function openImage(image: HTMLImageElement, pointerType: string) {
     dataSource: [
       {
         src: image.currentSrc,
+        msrc: image.currentSrc,
+        element: image,
         width: image.naturalWidth,
         height: image.naturalHeight,
         alt: image.alt,
@@ -21,13 +23,18 @@ function openImage(image: HTMLImageElement, pointerType: string) {
     arrowNext: false,
     loop: false,
     counter: false,
-    secondaryZoomLevel: ({ fit }) => Math.max(1, fit * 2),
-    maxZoomLevel: ({ fit }) => Math.max(2, fit * 4),
+    showHideAnimationType: 'zoom',
+    closeTitle: 'Close (Esc)',
+    zoomTitle: 'Zoom in/out',
+    bgOpacity: 1,
+    maxWidthToAnimate: 8000,
+    returnFocus: false,
   });
+
+  lightbox.on('destroy', () => image.focus({ preventScroll: true }));
 
   const setInputMode = (currentPointerType: string) => {
     lightbox.element?.classList.toggle('pswp--touch-input', currentPointerType === 'touch');
-    lightbox.element?.classList.toggle('pswp--mouse-input', currentPointerType !== 'touch');
   };
 
   lightbox.on('uiRegister', () => {
@@ -35,10 +42,9 @@ function openImage(image: HTMLImageElement, pointerType: string) {
 
     lightbox.ui?.registerElement({
       name: 'fullscreen',
-      order: 9,
+      order: 19,
       isButton: true,
-      ariaLabel: '全画面表示',
-      title: '全画面表示',
+      title: 'Toggle fullscreen',
       html: {
         isCustomSVG: true,
         size: 32,
@@ -50,12 +56,9 @@ function openImage(image: HTMLImageElement, pointerType: string) {
         const outline = element.querySelector<SVGUseElement>('.pswp__icn-shadow');
         const updateState = () => {
           const isFullscreen = document.fullscreenElement === pswp.element;
-          const label = isFullscreen ? '全画面表示を終了' : '全画面表示';
           const outlineHref = isFullscreen ? '#pswp__icn-fullscreen-exit' : '#pswp__icn-fullscreen';
 
-          element.setAttribute('aria-label', label);
           element.setAttribute('aria-pressed', String(isFullscreen));
-          element.title = label;
           outline?.setAttribute('href', outlineHref);
           outline?.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', outlineHref);
         };

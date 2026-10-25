@@ -152,7 +152,7 @@ export default defineConfig({
 
   vite: {
     build: {
-      assetsInlineLimit: 1,
+      assetsInlineLimit: (filePath) => (/\.(?:m?js)$/.test(filePath) ? false : undefined),
     },
     plugins: [tailwindcss()],
   },
