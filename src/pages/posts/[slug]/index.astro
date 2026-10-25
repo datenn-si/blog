@@ -39,28 +39,29 @@ const lastUpdated = post.data.updated ?? post.data.published;
   description={description || undefined}
   ogImagePath={`/posts/${encodeURIComponent(post.id)}/og-image.png`}
 >
-  <article class="mx-auto w-full max-w-3xl px-4 py-8">
-    <div>
-      <h1 class="text-2xl font-bold" data-pagefind-meta="title">
-        {post.data.title}
-      </h1>
+  <article data-pagefind-body>
+    <h1 class="text-2xl font-bold">
+      {post.data.title}
+    </h1>
+    <div data-pagefind-ignore>
       <StalePostWarning date={lastUpdated} />
       <PostMeta post={post} variant="page" />
     </div>
     <div
-      class="prose prose-sm mt-6 max-w-none text-ink dark:prose-invert [--tw-prose-body:var(--color-ink)] [--tw-prose-headings:var(--color-ink)] [--tw-prose-counters:var(--color-ink)] [--tw-prose-bullets:var(--color-ink)] [--tw-prose-links:var(--color-accent)]"
-      data-pagefind-body
+      class="prose prose-sm mt-6 max-w-none text-ink dark:prose-invert [--tw-prose-body:var(--color-ink)] [--tw-prose-headings:var(--color-ink)] [--tw-prose-counters:var(--color-ink)] [--tw-prose-bullets:var(--color-ink)] [--tw-prose-links:var(--color-accent)] prose-headings:scroll-m-16"
     >
       <Content />
     </div>
-    <ShareButtons title={post.data.title} url={Astro.url.href} />
-    <AuthorCard authorId={post.data.author} />
-    <Comments />
+    <div data-pagefind-ignore>
+      <ShareButtons title={post.data.title} url={Astro.url.href} />
+      <AuthorCard authorId={post.data.author} />
+      <Comments />
+    </div>
   </article>
   {
     recommendedPosts.length > 0 && (
       <section
-        class="mx-auto w-full max-w-3xl px-4 pb-8"
+        class="mt-10 border-t border-line pt-8"
         aria-labelledby="recommended-posts-heading"
       >
         <h2 id="recommended-posts-heading" class="text-xl font-bold">

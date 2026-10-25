@@ -89,6 +89,7 @@ export default defineConfig({
               type: 'element',
               tagName: 'details',
               properties: {
+                'data-pagefind-ignore': '',
                 open: 'open',
                 className: 'toc-shell',
               },

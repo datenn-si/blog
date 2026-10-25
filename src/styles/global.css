@@ -60,7 +60,18 @@ html.dark {
 }
 
 .theme-tooltip {
-  @apply absolute top-[calc(100%+0.25rem)] right-0 z-70 pointer-events-none invisible whitespace-nowrap rounded-control border border-line bg-surface px-2 py-1 text-xs leading-tight text-ink opacity-0;
+  @apply absolute top-[calc(100%+0.25rem)] left-1/2 z-70 -translate-x-1/2 pointer-events-none invisible whitespace-nowrap rounded-control border border-line bg-surface px-2 py-1 text-xs leading-tight text-ink opacity-0;
+}
+
+.theme-tooltip-right {
+  @apply right-0 left-auto translate-x-0;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .group:hover > [role='tooltip'],
+  .group:has(:focus-visible) > [role='tooltip'] {
+    @apply visible opacity-100;
+  }
 }
 
 :root:root {
@@ -85,7 +96,7 @@ html.dark {
   --pf-outline-focus: var(--accent);
   --pf-font: var(--font-noto-sans-jp), sans-serif;
   --pf-border-radius: var(--radius-control);
-  --pf-modal-backdrop: color-mix(in srgb, var(--ink) 40%, transparent);
+  --pf-modal-backdrop: #00000080;
 }
 
 html.dark:root {

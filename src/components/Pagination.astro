@@ -1,5 +1,5 @@
 ---
-import type { Page } from 'astro';
+import type { Page } from "astro";
 
 type Props = {
   page: Page<unknown>;
@@ -8,76 +8,80 @@ type Props = {
 const { page } = Astro.props;
 
 const windows = [
-  { breakpoint: 'base', delta: 0 },
-  { breakpoint: 'sm', delta: 1 },
-  { breakpoint: 'md', delta: 2 },
-  { breakpoint: 'lg', delta: 3 },
-  { breakpoint: 'xl', delta: 4 },
-  { breakpoint: '2xl', delta: 5 },
+  { breakpoint: "base", delta: 0 },
+  { breakpoint: "sm", delta: 4 },
 ] as const;
 
 const maxDelta = windows[windows.length - 1].delta;
 const start = Math.max(1, page.currentPage - maxDelta);
 const end = Math.min(page.lastPage, page.currentPage + maxDelta);
-const numbers = Array.from({ length: end - start + 1 }, (_, index) => start + index);
-const pageOne = page.url.first ?? (page.url.current || '/');
+const numbers = Array.from(
+  { length: end - start + 1 },
+  (_, index) => start + index,
+).filter((number) => number > 1 && number < page.lastPage);
+const pageOne = page.url.first ?? (page.url.current || "/");
 
 function pageHref(target: number): string {
   if (target === page.currentPage) return page.url.current;
   if (target === 1) return pageOne;
   if (target === page.lastPage && page.url.last) return page.url.last;
-  return pageOne === '/' ? `/${target}` : `${pageOne}/${target}`;
+  const base = pageOne.endsWith("/") ? pageOne : `${pageOne}/`;
+  return `${base}${target}/`;
 }
 
 function numberClass(number: number): string | undefined {
+  if (number === 1 || number === page.lastPage) return undefined;
   const distance = Math.abs(number - page.currentPage);
   const shownAt = windows.find((window) => window.delta >= distance);
-  if (!shownAt || shownAt.breakpoint === 'base') return undefined;
+  if (!shownAt || shownAt.breakpoint === "base") return undefined;
   return `win-${shownAt.breakpoint}`;
 }
 
-function hasGap(delta: number, side: 'left' | 'right'): boolean {
-  if (side === 'left') return page.currentPage - delta > 1;
-  return page.currentPage + delta < page.lastPage;
+function hasGap(delta: number, side: "left" | "right"): boolean {
+  if (side === "left") return page.currentPage - delta > 2;
+  return page.currentPage + delta < page.lastPage - 1;
 }
 
-function ellipsisClass(side: 'left' | 'right'): string | null {
+function ellipsisClass(side: "left" | "right"): string | null {
   if (!hasGap(windows[0].delta, side)) return null;
   const hideAt = windows.find((window) => !hasGap(window.delta, side));
-  if (!hideAt) return '';
+  if (!hideAt) return "";
   return `until-${hideAt.breakpoint}`;
 }
 
-const leftEllipsis = ellipsisClass('left');
-const rightEllipsis = ellipsisClass('right');
-
-const ends = [
-  { label: '最初のページ', text: '<<', href: page.url.first },
-  { label: '前のページ', text: '<', href: page.url.prev },
-];
-
-const tails = [
-  { label: '次のページ', text: '>', href: page.url.next },
-  { label: '最後のページ', text: '>>', href: page.url.last },
-];
+const leftEllipsis = ellipsisClass("left");
+const rightEllipsis = ellipsisClass("right");
 ---
 
 <nav aria-label="ページネーション">
   <ul class="pager">
     {
-      ends.map((item) => (
+      page.url.prev ? (
         <li>
-          {item.href ? (
-            <a href={item.href} aria-label={item.label}>
-              {item.text}
-            </a>
+          <a href={page.url.prev} aria-label="前のページ">
+            &lt;
+          </a>
+        </li>
+      ) : (
+        <li>
+          <span aria-disabled="true" aria-label="前のページ">
+            &lt;
+          </span>
+        </li>
+      )
+    }
+    {
+      (
+        <li>
+          {page.currentPage === 1 ? (
+            <span aria-current="page">1</span>
           ) : (
-            <span aria-disabled="true" aria-label={item.label}>
-              {item.text}
-            </span>
+            <a href={pageHref(1)} aria-label="ページ 1">
+              1
+            </a>
           )}
         </li>
-      ))
+      )
     }
     {
       leftEllipsis !== null && (
@@ -123,30 +127,46 @@ const tails = [
       )
     }
     {
-      tails.map((item) => (
+      page.lastPage > 1 && (
         <li>
-          {item.href ? (
-            <a href={item.href} aria-label={item.label}>
-              {item.text}
-            </a>
+          {page.currentPage === page.lastPage ? (
+            <span aria-current="page">{page.lastPage}</span>
           ) : (
-            <span aria-disabled="true" aria-label={item.label}>
-              {item.text}
-            </span>
+            <a
+              href={pageHref(page.lastPage)}
+              aria-label={`ページ ${page.lastPage}`}
+            >
+              {page.lastPage}
+            </a>
           )}
         </li>
-      ))
+      )
+    }
+    {
+      page.url.next ? (
+        <li>
+          <a href={page.url.next} aria-label="次のページ">
+            &gt;
+          </a>
+        </li>
+      ) : (
+        <li>
+          <span aria-disabled="true" aria-label="次のページ">
+            &gt;
+          </span>
+        </li>
+      )
     }
   </ul>
 </nav>
 
 <script>
-  for (const node of document.querySelectorAll('[data-page-jump]')) {
+  for (const node of document.querySelectorAll("[data-page-jump]")) {
     if (!(node instanceof HTMLButtonElement)) continue;
 
-    node.addEventListener('click', () => {
+    node.addEventListener("click", () => {
       const last = Number(node.dataset.last);
-      const base = node.dataset.base || '/';
+      const base = node.dataset.base || "/";
       if (!Number.isInteger(last) || last < 1) return;
 
       const answer = window.prompt(`ページへ移動(1~${last})：`);
@@ -158,7 +178,8 @@ const tails = [
       const target = Number(value);
       if (target < 1 || target > last) return;
 
-      window.location.href = target === 1 ? base : base === '/' ? `/${target}` : `${base}/${target}`;
+      const basePath = base.endsWith("/") ? base : `${base}/`;
+      window.location.href = target === 1 ? basePath : `${basePath}${target}/`;
     });
   }
 </script>
@@ -182,12 +203,12 @@ const tails = [
     @apply bg-canvas text-accent;
   }
 
-  .pager [aria-current='page'] {
+  .pager [aria-current="page"] {
     @apply border-highlight bg-highlight text-highlight-ink;
   }
 
-  .pager [aria-disabled='true'] {
-    @apply border-line bg-canvas text-muted;
+  .pager [aria-disabled="true"] {
+    @apply border-line bg-canvas text-muted opacity-40;
   }
 
   .win-sm {

@@ -1,27 +1,25 @@
 ---
-import Layout from '@/layouts/Layout.astro';
-import { countTags, getPosts, tagPath } from '@/lib/posts';
+import Layout from "@/layouts/Layout.astro";
+import { countTags, getPosts, tagPath } from "@/lib/posts";
 
 const posts = await getPosts();
 const tags = countTags(posts);
 ---
 
 <Layout title="タグ" description="投稿についているタグの一覧です。">
-  <section class="mx-auto w-full max-w-3xl px-4 py-8">
-    <h1 class="text-2xl font-bold">タグ</h1>
-    {
-      tags.length === 0 ? (
-        <p class="mt-6 text-muted">タグはまだありません。</p>
-      ) : (
-        <ul class="mt-6 flex flex-col gap-2">
-          {tags.map((item) => (
-            <li>
-              <a href={tagPath(item.tag)}>{item.tag}</a>
-              <span class="text-muted"> ({item.count})</span>
-            </li>
-          ))}
-        </ul>
-      )
-    }
-  </section>
+  <h1 class="text-2xl font-bold">タグ</h1>
+  {
+    tags.length === 0 ? (
+      <p class="mt-6 text-muted">タグはまだありません。</p>
+    ) : (
+      <ul class="mt-6 flex flex-wrap gap-4">
+        {tags.map((item) => (
+          <li>
+            <a href={tagPath(item.tag)}>{item.tag}</a>
+            <span class="text-muted"> ({item.count})</span>
+          </li>
+        ))}
+      </ul>
+    )
+  }
 </Layout>

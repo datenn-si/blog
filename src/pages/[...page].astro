@@ -4,7 +4,7 @@ import type { GetStaticPaths } from "astro";
 import PostList from "@/components/PostList.astro";
 import { postsPerPage, siteConfig } from "@/constants";
 import Layout from "@/layouts/Layout.astro";
-import { getPosts, pageDocumentTitle } from "@/lib/posts";
+import { getPosts, addPageNumber } from "@/lib/posts";
 
 export const getStaticPaths = (async ({ paginate }) => {
   const posts = await getPosts();
@@ -16,9 +16,13 @@ const heading = "投稿一覧";
 const title =
   page.currentPage === 1
     ? siteConfig.siteName
-    : pageDocumentTitle(heading, page.currentPage);
+    : addPageNumber(heading, page.currentPage, page.lastPage);
+const description =
+  page.currentPage === 1
+    ? siteConfig.siteDefaultDescription
+    : addPageNumber("すべての投稿の一覧。", page.currentPage, page.lastPage);
 ---
 
-<Layout title={title} description={siteConfig.siteDefaultDescription}>
+<Layout title={title} description={description}>
   <PostList heading={heading} page={page} />
 </Layout>

@@ -5,6 +5,7 @@ export function initTheme(): void {
   const button = root.querySelector<HTMLButtonElement>('.theme-button')!;
   const menu = root.querySelector<HTMLElement>('.theme-menu')!;
   const backdrop = root.querySelector<HTMLElement>('.theme-backdrop')!;
+  const navigation = document.querySelector<HTMLElement>('#site-navigation');
   if (!root || !button || !menu || !backdrop) return;
 
   const options = [...menu.querySelectorAll<HTMLButtonElement>('[data-theme-value]')];
@@ -12,7 +13,13 @@ export function initTheme(): void {
   const pageScrollKeys = new Set(['PageUp', 'PageDown', 'Home', 'End', 'ArrowUp', 'ArrowDown']);
 
   function preventScroll(event: WheelEvent | TouchEvent): void {
-    if (!menu.hidden) event.preventDefault();
+    if (!menu.hidden) {
+      event.preventDefault();
+      return;
+    }
+    if (!navigation?.matches(':popover-open')) return;
+    if (event.target instanceof Node && navigation.contains(event.target)) return;
+    event.preventDefault();
   }
 
   document.addEventListener('wheel', preventScroll, { passive: false });
@@ -70,7 +77,12 @@ export function initTheme(): void {
   document.addEventListener(
     'keydown',
     (event) => {
-      if (menu.hidden) return;
+      if (menu.hidden) {
+        if (!navigation?.matches(':popover-open')) return;
+        if (event.target instanceof Node && navigation.contains(event.target)) return;
+        if (pageScrollKeys.has(event.key)) event.preventDefault();
+        return;
+      }
       if (pageScrollKeys.has(event.key)) {
         event.preventDefault();
         return;

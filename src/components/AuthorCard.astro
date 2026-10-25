@@ -27,20 +27,27 @@ const author = getAuthor(authorId);
       <div class="flex min-w-0 flex-col items-center gap-2 sm:items-start">
         <h2 class="text-lg font-bold text-ink">{author.name}</h2>
         <ul class="flex flex-wrap justify-center gap-1 sm:justify-start">
-          {socialLinks.map((link) => (
+          {socialLinks.map((link, index) => (
             <li>
               <a
-                class="grid size-9 place-items-center rounded-control text-ink hover:bg-canvas"
+                class="group relative grid size-9 place-items-center rounded-control text-ink hover:bg-canvas"
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={link.name}
-                title={link.name}
+                aria-describedby={`social-tooltip-${index}`}
               >
                 <span
                   class:list={[link.iconClass, "text-xl"]}
                   aria-hidden="true"
                 />
+                <span
+                  id={`social-tooltip-${index}`}
+                  class="theme-tooltip"
+                  role="tooltip"
+                >
+                  {link.name}
+                </span>
               </a>
             </li>
           ))}

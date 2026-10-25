@@ -2,20 +2,32 @@
 // @ts-expect-error Pagefind exposes this stylesheet without a TypeScript declaration.
 import "@pagefind/component-ui/css";
 
+import { Image } from "astro:assets";
+import icon from "@/assets/icon.png";
 import { navigationItems, siteConfig } from "@/constants";
 
 const themeOptions = [
-  { value: "auto", label: "自動", icon: "icon-[mdi--theme-light-dark]" },
-  { value: "light", label: "ライト", icon: "icon-[mdi--white-balance-sunny]" },
-  { value: "dark", label: "ダーク", icon: "icon-[mdi--weather-night]" },
+  { value: "auto", label: "自動", icon: "icon-[ic--baseline-devices]" },
+  { value: "light", label: "ライト", icon: "icon-[ic--baseline-light-mode]" },
+  { value: "dark", label: "ダーク", icon: "icon-[ic--baseline-dark-mode]" },
 ] as const;
 ---
 
-<header class="h-12 border-b border-line bg-surface">
+<header class="sticky top-0 z-50 h-12 border-b border-line bg-surface">
   <div
     class="mx-auto flex h-full w-full max-w-3xl items-center gap-1 px-4 md:gap-4"
   >
-    <a href="/" class="mr-auto font-bold text-ink">{siteConfig.siteName}</a>
+    <a href="/" class="mr-auto font-bold text-ink with-icon">
+      <Image
+        src={icon}
+        alt="favicon"
+        width={20}
+        height={20}
+        class="rounded-sm"
+        loading="eager"
+        fetchpriority="high"
+      />{siteConfig.siteName}</a
+    >
     <div class="order-1 flex items-center md:order-3">
       <div class="group relative">
         <button
@@ -83,23 +95,30 @@ const themeOptions = [
         </div>
       </div>
     </div>
-    <button
-      type="button"
-      popovertarget="site-navigation"
-      aria-label="ナビゲーションを開閉"
-      class="menu-toggle order-2 grid size-9 place-items-center md:hidden"
-    >
-      <span class="menu-open icon-[mdi--menu] text-2xl" aria-hidden="true"
-      ></span>
+    <div class="theme group relative order-2">
+      <button
+        type="button"
+        popovertarget="site-navigation"
+        aria-label="ナビゲーションを開閉"
+        class="menu-toggle grid size-9 place-items-center cursor-pointer md:hidden"
+      >
+        <span class="menu-open icon-[mdi--menu] text-2xl" aria-hidden="true"
+        ></span>
+        <span
+          class="menu-close icon-[mdi--close] hidden text-2xl"
+          aria-hidden="true"></span>
+      </button>
       <span
-        class="menu-close icon-[mdi--close] hidden text-2xl"
-        aria-hidden="true"></span>
-    </button>
+        id="theme-tooltip"
+        class="theme-tooltip theme-tooltip-right"
+        role="tooltip">ナビゲーションを開閉</span
+      >
+    </div>
     <nav
       id="site-navigation"
       popover="auto"
       aria-label="ナビゲーション"
-      class="fixed inset-x-0 top-12 z-50 m-0 hidden h-[calc(100dvh-3rem)] w-full max-w-none flex-col items-stretch gap-0 overflow-y-auto border-0 border-t border-line bg-surface px-4 py-4 text-ink shadow-none [&:popover-open]:flex md:static md:order-2 md:flex md:w-auto md:flex-row md:items-center md:gap-4 md:overflow-visible md:border-0 md:bg-transparent md:p-0"
+      class="fixed inset-x-0 top-12 z-50 m-0 hidden max-md:h-[calc(100dvh-3rem)] w-full max-w-none flex-col items-stretch gap-0 overflow-y-auto overscroll-y-contain border-0 border-t border-line bg-surface px-4 py-4 text-ink shadow-none [&:popover-open]:flex md:static md:order-2 md:flex md:w-auto md:flex-row md:items-center md:gap-4 md:overflow-visible md:border-0 md:bg-transparent md:p-0"
     >
       {
         navigationItems.map((item) => (
@@ -146,20 +165,16 @@ const themeOptions = [
 <style>
   @reference "@/styles/global.css";
 
-  :global(html:has(#site-navigation:popover-open)) {
-    @apply overflow-hidden;
-  }
-
   pagefind-modal:not(:defined),
   pagefind-config:not(:defined) {
     display: none;
   }
 
-  .menu-toggle:has(+ #site-navigation:popover-open) .menu-open {
+  header:has(#site-navigation:popover-open) .menu-open {
     @apply hidden;
   }
 
-  .menu-toggle:has(+ #site-navigation:popover-open) .menu-close {
+  header:has(#site-navigation:popover-open) .menu-close {
     @apply block;
   }
 
@@ -168,13 +183,6 @@ const themeOptions = [
   :global(html:not([data-theme="light"]):not([data-theme="dark"]))
     .theme-icon[data-theme-icon="auto"] {
     @apply block;
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .group:hover > [role="tooltip"],
-    .group:has(:focus-visible) > [role="tooltip"] {
-      @apply visible opacity-100;
-    }
   }
 
   header:has(:global(dialog.pf-modal[open])) #search-tooltip {

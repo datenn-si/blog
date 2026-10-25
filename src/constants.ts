@@ -1,5 +1,5 @@
 import type { ImageMetadata } from 'astro';
-import icon from './assets/icon.png';
+import icon from '@/assets/icon.png';
 
 export const postsPerPage = 10;
 export const recommendedPostsLimit = 3;
@@ -51,6 +51,11 @@ export const socialLinks: {
   readonly iconClass: string;
 }[] = [
   {
+    name: 'プロフィール',
+    url: 'https://datenn.si/',
+    iconClass: 'icon-[mdi--internet]',
+  },
+  {
     name: 'GitHub',
     url: 'https://github.com/datenn-si',
     iconClass: 'icon-[simple-icons--github]',
@@ -71,28 +76,18 @@ export const socialLinks: {
     iconClass: 'icon-[simple-icons--huggingface]',
   },
   {
-    name: 'note',
-    url: 'https://note.com/datenn_si',
-    iconClass: 'icon-[simple-icons--note]',
-  },
-  {
-    name: 'Qiita',
-    url: 'https://qiita.com/datenn-si',
-    iconClass: 'icon-[simple-icons--qiita]',
-  },
-  {
-    name: 'Zenn',
-    url: 'https://zenn.dev/datenn_si',
-    iconClass: 'icon-[simple-icons--zenn]',
-  },
-  {
-    name: 'YouTube',
-    url: 'https://www.youtube.com/@datenn-si',
-    iconClass: 'icon-[simple-icons--youtube]',
+    name: 'Civitai',
+    url: 'https://civitai.red/user/datenn_si',
+    iconClass: 'icon-[thesvg--civitai]',
   },
   {
     name: 'pixiv',
     url: 'https://pixiv.me/datenn-si',
     iconClass: 'icon-[simple-icons--pixiv]',
+  },
+  {
+    name: 'YouTube',
+    url: 'https://www.youtube.com/@datenn-si',
+    iconClass: 'icon-[simple-icons--youtube]',
   },
 ];
