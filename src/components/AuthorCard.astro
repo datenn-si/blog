@@ -1,0 +1,58 @@
+---
+import { Image } from "astro:assets";
+
+import { getAuthor, socialLinks } from "@/constants";
+
+type Props = {
+  authorId: string;
+};
+
+const { authorId } = Astro.props;
+const author = getAuthor(authorId);
+---
+
+{
+  author && (
+    <section
+      class="mt-8 flex flex-col items-center gap-3 rounded-card border border-line bg-surface p-4 sm:flex-row sm:items-start"
+      aria-label={`${author.name}について`}
+    >
+      <Image
+        src={author.icon}
+        alt={`${author.name} のアバター`}
+        width={80}
+        height={80}
+        class="size-20 shrink-0 rounded-full object-cover"
+      />
+      <div class="flex min-w-0 flex-col items-center gap-2 sm:items-start">
+        <h2 class="text-lg font-bold text-ink">{author.name}</h2>
+        <ul class="flex flex-wrap justify-center gap-1 sm:justify-start">
+          {socialLinks.map((link, index) => (
+            <li>
+              <a
+                class="group relative grid size-9 place-items-center rounded-control text-ink hover:bg-canvas"
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={link.name}
+                aria-describedby={`social-tooltip-${index}`}
+              >
+                <span
+                  class:list={[link.iconClass, "text-xl"]}
+                  aria-hidden="true"
+                />
+                <span
+                  id={`social-tooltip-${index}`}
+                  class="theme-tooltip"
+                  role="tooltip"
+                >
+                  {link.name}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}

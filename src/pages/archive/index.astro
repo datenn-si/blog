@@ -1,36 +1,39 @@
 ---
-import Layout from '@/layouts/Layout.astro';
-import { getPosts, groupArchive, monthPath, yearPath } from '@/lib/posts';
+import Layout from "@/layouts/Layout.astro";
+import { getPosts, groupArchive, monthPath, yearPath } from "@/lib/posts";
 
 const years = groupArchive(await getPosts());
 ---
 
 <Layout title="アーカイブ" description="投稿があった年と月の一覧です。">
-  <section class="mx-auto w-full max-w-3xl px-4 py-8">
-    <h1 class="text-2xl font-bold">アーカイブ</h1>
-    {
-      years.length === 0 ? (
-        <p class="mt-6 text-muted">投稿はまだありません。</p>
-      ) : (
-        <div class="mt-6 flex flex-col gap-6">
-          {years.map((year) => (
-            <section>
-              <h2 class="text-lg font-bold">
-                <a href={yearPath(year.year)}>{year.year}年</a>
-                <span class="text-sm font-normal text-muted"> ({year.count})</span>
-              </h2>
-              <ul class="mt-2 flex flex-col gap-1">
-                {year.months.map((month) => (
-                  <li>
-                    <a href={monthPath(year.year, month.month)}>{month.month}月</a>
-                    <span class="text-muted"> ({month.count})</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ))}
-        </div>
-      )
-    }
-  </section>
+  <h1 class="text-2xl font-bold">アーカイブ</h1>
+  {
+    years.length === 0 ? (
+      <p class="mt-6 text-muted">投稿はまだありません。</p>
+    ) : (
+      <div class="mt-6 flex flex-wrap gap-4">
+        {years.map((year) => (
+          <section>
+            <h2 class="text-lg font-bold">
+              <a href={yearPath(year.year)}>{year.year}年</a>
+              <span class="text-sm font-normal text-muted">
+                {" "}
+                ({year.count})
+              </span>
+            </h2>
+            <ul class="mt-2 flex flex-col gap-1">
+              {year.months.map((month) => (
+                <li>
+                  <a href={monthPath(year.year, month.month)}>
+                    {month.month}月
+                  </a>
+                  <span class="text-muted"> ({month.count})</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+    )
+  }
 </Layout>

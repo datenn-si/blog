@@ -2,9 +2,9 @@ name: CI/CD
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
   pull_request:
-    branches: [main]
+    branches: [main, develop]
 
 permissions:
   contents: read
@@ -42,6 +42,10 @@ jobs:
         id: format
         run: pnpm fmt:check
 
+      - name: Test
+        id: test
+        run: pnpm test
+
       - name: Build
         id: build
         run: pnpm build
@@ -59,6 +63,7 @@ jobs:
         env:
           LINT_RESULT: ${{ steps.lint.outcome }}
           FORMAT_RESULT: ${{ steps.format.outcome }}
+          TEST_RESULT: ${{ steps.test.outcome }}
           BUILD_RESULT: ${{ steps.build.outcome }}
           DEPLOY_RESULT: ${{ steps.deploy.outcome }}
           EVENT_NAME: ${{ github.event_name }}
@@ -80,6 +85,7 @@ jobs:
             echo "| --- | --- |"
             echo "| Oxlint | $(status_icon "${LINT_RESULT:-}") |"
             echo "| Oxfmt | $(status_icon "${FORMAT_RESULT:-}") |"
+            echo "| Tests | $(status_icon "${TEST_RESULT:-}") |"
             echo "| Astro build | $(status_icon "${BUILD_RESULT:-}") |"
             echo "| Cloudflare deploy | $(status_icon "${DEPLOY_RESULT:-}") |"
             echo ""

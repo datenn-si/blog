@@ -16,6 +16,7 @@ type Props = {
 };
 
 const { post, variant } = Astro.props;
+const indexFilters = variant === "page";
 const author = getAuthor(post.data.author);
 const published = post.data.published;
 const updated = post.data.updated;
@@ -61,32 +62,26 @@ const updated = post.data.updated;
     </span>
   </p>
   <ul class="tags">
-    <li
-      class:list={[
-        "px-2 py-1 rounded-control border border-line",
-        variant === "card" && "tag-above",
-      ]}
-    >
+    <li class:list={["post-tag", variant === "card" && "tag-above"]}>
       <a href={categoryPath(post.data.category)} class="with-icon">
         <span class="icon-[mdi--folder-outline] text-base" aria-hidden="true"
         ></span>
-        {post.data.category}
+        <span data-pagefind-filter={indexFilters ? "カテゴリ" : undefined}>
+          {post.data.category}
+        </span>
       </a>
     </li>
     {
       post.data.tags.map((tag) => (
-        <li
-          class:list={[
-            "px-2 py-1 rounded-control border border-line",
-            variant === "card" && "tag-above",
-          ]}
-        >
+        <li class:list={["post-tag", variant === "card" && "tag-above"]}>
           <a href={tagPath(tag)} class="with-icon">
             <span
               class="icon-[mdi--tag-outline] text-base"
               aria-hidden="true"
             />
-            {tag}
+            <span data-pagefind-filter={indexFilters ? "タグ" : undefined}>
+              {tag}
+            </span>
           </a>
         </li>
       ))
@@ -110,6 +105,10 @@ const updated = post.data.updated;
   }
   .tags {
     @apply gap-1;
+  }
+
+  .post-tag {
+    @apply rounded-control border border-line px-2 py-1;
   }
 
   .tag-above {

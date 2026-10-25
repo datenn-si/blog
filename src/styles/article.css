@@ -4,6 +4,35 @@
   @apply rounded-control bg-line px-1 py-0.5 font-normal text-ink before:content-none after:content-none;
 }
 
+.prose img[role='button'] {
+  @apply cursor-zoom-in;
+}
+
+.prose img[role='button']:focus-visible {
+  @apply outline-2 outline-offset-2 outline-accent;
+}
+
+.pswp .pswp__top-bar .pswp__button {
+  @apply w-11;
+}
+
+.pswp .pswp__top-bar .pswp__icn {
+  @apply left-1.5;
+}
+
+.pswp--touch-input .pswp__button--zoom {
+  display: none !important;
+}
+
+.pswp--mouse-input .pswp__button--zoom {
+  display: block !important;
+}
+
+.pswp__button--fullscreen[aria-pressed='true'] .pswp__fullscreen-icon-enter,
+.pswp__button--fullscreen:not([aria-pressed='true']) .pswp__fullscreen-icon-exit {
+  @apply hidden;
+}
+
 .prose .toc-shell {
   @apply my-6 overflow-hidden rounded-card border border-line bg-surface/90;
 }
@@ -98,4 +127,8 @@
 
 .prose .ec .frame {
   @apply rounded-card;
+}
+
+.share-button {
+  @apply inline-flex min-h-9 items-center gap-1.5 rounded-control border border-line px-3 py-1.5 text-sm font-medium;
 }

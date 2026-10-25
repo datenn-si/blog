@@ -1,5 +1,5 @@
 /*
-  Content-Security-Policy: default-src 'none'; script-src 'self' https://static.cloudflareinsights.com/; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'sha256-h1VyDNS+EPgt/19Gf8VYx/FRqUfEiu7bbZxkYHBCv2Q=' 'wasm-unsafe-eval' https://static.cloudflareinsights.com/ https://giscus.app; style-src 'self'; style-src-elem 'self' 'unsafe-inline' https://giscus.app; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src https://giscus.app; manifest-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; upgrade-insecure-requests
   Referrer-Policy: strict-origin-when-cross-origin
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
   X-Content-Type-Options: nosniff

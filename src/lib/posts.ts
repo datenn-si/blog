@@ -158,6 +158,6 @@ export function groupArchive(posts: Post[]): YearArchive[] {
     }));
 }
 
-export function pageDocumentTitle(heading: string, currentPage: number): string {
-  return currentPage === 1 ? heading : `${heading}（${currentPage}）`;
+export function addPageNumber(text: string, currentPage: number, lastPage: number): string {
+  return `${text}${/」|。/.test(text.slice(-1)) ? '' : ' '}(ページ ${currentPage}/${lastPage})`;
 }

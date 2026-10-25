@@ -2,24 +2,33 @@
 import { render } from "astro:content";
 import type { GetStaticPaths } from "astro";
 
+import AuthorCard from "@/components/AuthorCard.astro";
+import Comments from "@/components/Comments.astro";
+import PostCard from "@/components/PostCard.astro";
 import PostMeta from "@/components/PostMeta.astro";
+import ShareButtons from "@/components/ShareButtons.astro";
 import StalePostWarning from "@/components/StalePostWarning.astro";
 import Layout from "@/layouts/Layout.astro";
+import { recommendedPostsLimit } from "@/constants";
 import { getPosts, postDescription } from "@/lib/posts";
+import { getRelatedPosts } from "@/lib/recommendations";
 import "@/styles/article.css";
 import "remark-github-alerts/styles/github-colors-light.css";
-import "remark-github-alerts/styles/github-colors-dark-media.css";
+import "remark-github-alerts/styles/github-colors-dark-class.css";
 import "remark-github-alerts/styles/github-base.css";
 
 export const getStaticPaths = (async () => {
   const posts = await getPosts();
   return posts.map((post) => ({
     params: { slug: post.id },
-    props: { post },
+    props: {
+      post,
+      recommendedPosts: getRelatedPosts(posts, post, recommendedPostsLimit),
+    },
   }));
 }) satisfies GetStaticPaths;
 
-const { post } = Astro.props;
+const { post, recommendedPosts } = Astro.props;
 const { Content } = await render(post);
 const description = postDescription(post);
 const lastUpdated = post.data.updated ?? post.data.published;
@@ -30,16 +39,46 @@ const lastUpdated = post.data.updated ?? post.data.published;
   description={description || undefined}
   ogImagePath={`/posts/${encodeURIComponent(post.id)}/og-image.png`}
 >
-  <article class="mx-auto w-full max-w-3xl px-4 py-8">
-    <div>
-      <h1 class="text-2xl font-bold">{post.data.title}</h1>
+  <article data-pagefind-body>
+    <h1 class="text-2xl font-bold">
+      {post.data.title}
+    </h1>
+    <div data-pagefind-ignore>
       <StalePostWarning date={lastUpdated} />
       <PostMeta post={post} variant="page" />
     </div>
     <div
-      class="prose prose-sm mt-6 max-w-none text-ink dark:prose-invert [--tw-prose-body:var(--color-ink)] [--tw-prose-headings:var(--color-ink)] [--tw-prose-counters:var(--color-ink)] [--tw-prose-bullets:var(--color-ink)] [--tw-prose-links:var(--color-accent)]"
+      class="prose prose-sm mt-6 max-w-none text-ink dark:prose-invert [--tw-prose-body:var(--color-ink)] [--tw-prose-headings:var(--color-ink)] [--tw-prose-counters:var(--color-ink)] [--tw-prose-bullets:var(--color-ink)] [--tw-prose-links:var(--color-accent)] prose-headings:scroll-m-16"
     >
       <Content />
     </div>
+    <div data-pagefind-ignore>
+      <ShareButtons title={post.data.title} url={Astro.url.href} />
+      <AuthorCard authorId={post.data.author} />
+      <Comments />
+    </div>
   </article>
+  {
+    recommendedPosts.length > 0 && (
+      <section
+        class="mt-10 border-t border-line pt-8"
+        aria-labelledby="recommended-posts-heading"
+      >
+        <h2 id="recommended-posts-heading" class="text-xl font-bold">
+          おすすめ記事
+        </h2>
+        <ul class="mt-4 flex flex-col gap-4">
+          {recommendedPosts.map((recommendedPost) => (
+            <li>
+              <PostCard post={recommendedPost} />
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
 </Layout>
+
+<script>
+  import "@/scripts/photoswipe";
+</script>

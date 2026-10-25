@@ -1,6 +1,6 @@
 {
   "name": "blog",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -14,7 +14,8 @@
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
     "lint": "oxlint",
-    "lint:fix": "oxlint --fix"
+    "lint:fix": "oxlint --fix",
+    "test": "node --experimental-strip-types --test"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.3.4",
@@ -25,6 +26,7 @@
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.3.8",
     "budoux": "^0.9.3",
+    "photoswipe": "^5.4.4",
     "satori": "^0.62.0",
     "tailwindcss": "^4.3.3"
   },
@@ -32,10 +34,12 @@
     "@astrojs/markdown-remark": "^7.3.3",
     "@iconify/json": "^2.2.541",
     "@iconify/tailwind4": "^1.2.3",
+    "@pagefind/component-ui": "^1.5.2",
     "@types/node": "^26.6.5",
     "astro-expressive-code": "^0.44.2",
     "oxfmt": "^0.72.0",
     "oxlint": "^1.87.0",
+    "pagefind": "^1.5.2",
     "rehype-autolink-headings": "^7.1.0",
     "rehype-external-links": "^3.0.0",
     "rehype-slug": "^6.0.0",

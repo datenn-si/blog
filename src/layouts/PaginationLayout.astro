@@ -1,0 +1,20 @@
+---
+type Props = {
+  heading: string;
+  description: string;
+  page: Page;
+};
+import PostList from "@/components/PostList.astro";
+import Layout from "@/layouts/Layout.astro";
+import { addPageNumber } from "@/lib/posts";
+import type { Page } from "astro";
+
+const { heading, description, page } = Astro.props;
+---
+
+<Layout
+  title={addPageNumber(heading, page.currentPage, page.lastPage)}
+  description={addPageNumber(description, page.currentPage, page.lastPage)}
+>
+  <PostList heading={heading} page={page} />
+</Layout>

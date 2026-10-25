@@ -1,10 +1,9 @@
 ---
-import type { GetStaticPaths } from 'astro';
+import type { GetStaticPaths } from "astro";
 
-import PostList from '@/components/PostList.astro';
-import { postsPerPage } from '@/constants';
-import Layout from '@/layouts/Layout.astro';
-import { countTags, getPosts, pageDocumentTitle, postsWithTag } from '@/lib/posts';
+import { postsPerPage } from "@/constants";
+import PaginationLayout from "@/layouts/PaginationLayout.astro";
+import { countTags, getPosts, postsWithTag } from "@/lib/posts";
 
 export const getStaticPaths = (async ({ paginate }) => {
   const posts = await getPosts();
@@ -18,12 +17,10 @@ export const getStaticPaths = (async ({ paginate }) => {
 }) satisfies GetStaticPaths;
 
 const { page, tag } = Astro.props;
-const heading = `タグ「${tag}」`;
 ---
 
-<Layout
-  title={pageDocumentTitle(heading, page.currentPage)}
-  description={`${tag} タグが付いた投稿の一覧です。`}
->
-  <PostList heading={heading} page={page} />
-</Layout>
+<PaginationLayout
+  heading={`タグ「${tag}」`}
+  description={`「${tag}」タグが付いた投稿の一覧です。`}
+  page={page}
+/>

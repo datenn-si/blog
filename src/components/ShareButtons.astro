@@ -1,0 +1,95 @@
+---
+type Props = {
+  title: string;
+  url: string;
+};
+
+const { title, url } = Astro.props;
+const xShareUrl = new URL("https://twitter.com/intent/tweet");
+xShareUrl.searchParams.set("text", title);
+xShareUrl.searchParams.set("url", url);
+const blueskyShareUrl = new URL("https://bsky.app/intent/compose");
+blueskyShareUrl.searchParams.set("text", `${title} ${url}`);
+---
+
+<section class="mt-8 flex flex-wrap gap-1.5" aria-label="記事を共有">
+  <a
+    class="share-button bg-black text-white hover:bg-[hsl(213,11%,14%)]"
+    href={xShareUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <span class="icon-[simple-icons--x] text-sm" aria-hidden="true"></span>
+    Xで共有
+  </a>
+  <a
+    class="share-button bg-[hsl(224,76%,48%)] text-white hover:bg-[hsl(224,76%,40%)]"
+    href={blueskyShareUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <span class="icon-[simple-icons--bluesky] text-sm" aria-hidden="true"
+    ></span>
+    Blueskyで共有
+  </a>
+  <button
+    class="share-button cursor-pointer bg-surface text-ink hover:bg-canvas"
+    type="button"
+    data-copy-url={url}
+    data-copy-button
+    hidden
+  >
+    <span class="icon-[mdi--content-copy] text-sm" aria-hidden="true"></span>
+    <span data-copy-label>URLをコピー</span>
+  </button>
+  <button
+    class="share-button cursor-pointer bg-surface text-ink hover:bg-canvas"
+    type="button"
+    data-web-share
+    data-title={title}
+    hidden
+  >
+    <span class="icon-[mdi--share-variant] text-sm" aria-hidden="true"></span>
+    その他で共有
+  </button>
+</section>
+
+<script>
+  const copyButton =
+    document.querySelector<HTMLButtonElement>("[data-copy-button]");
+  const button = document.querySelector<HTMLButtonElement>("[data-web-share]");
+
+  if (copyButton && typeof navigator.clipboard?.writeText === "function") {
+    copyButton.hidden = false;
+    copyButton.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(
+          copyButton.dataset.copyUrl ?? window.location.href,
+        );
+        const label =
+          copyButton.querySelector<HTMLElement>("[data-copy-label]");
+        if (!label) return;
+        label.textContent = "コピーしました";
+        window.setTimeout(() => {
+          label.textContent = "URLをコピー";
+        }, 1500);
+      } catch {
+        // Clipboard access can be denied by the browser.
+      }
+    });
+  }
+
+  if (button && typeof navigator.share === "function") {
+    button.hidden = false;
+    button.addEventListener("click", async () => {
+      try {
+        await navigator.share({
+          title: button.dataset.title,
+          url: window.location.href,
+        });
+      } catch {
+        // Sharing can be dismissed by the user.
+      }
+    });
+  }
+</script>
