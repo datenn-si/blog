@@ -92,7 +92,7 @@
 
 記事は [`datenn-si/posts`](https://github.com/datenn-si/posts) サブモジュールにあります。そこの `main` へ push したコミットのうち、件名が `post:` で始まるものがあると公開処理が始まります。新規投稿も、その後の更新も、この接頭辞を使います。
 
-1. `datenn-si/posts` の `.github/workflows/new-post.yml` が、そのコミットの SHA を渡してこのリポジトリの `Update posts` を起動します。push のペイロードに含まれるコミットは最大 20 件なので、それより古い `post:` コミットは検知されません。
+1. `datenn-si/posts` の `.github/workflows/post.yml` が、そのコミットの SHA を渡してこのリポジトリの `Update posts` を起動します。push のペイロードに含まれるコミットは最大 20 件なので、それより古い `post:` コミットは検知されません。
 2. `update-posts.yml` が `posts/update-<sha>` ブランチを作り、サブモジュールをその SHA に向けた pull request を開きます。
 3. pull request で CI が走り、成功すると `merge-posts.yml` が merge commit でマージします。
 4. そのマージが `main` への push になり、Deploy がサイトを公開します。

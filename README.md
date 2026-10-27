@@ -95,7 +95,7 @@ Work on a `feature` or `fix` branch. Merge into `main` only through a pull reque
 
 Articles live in the [`datenn-si/posts`](https://github.com/datenn-si/posts) submodule. A push to `main` there publishes when one of its commits has a subject line that starts with `post:`. Use that prefix for a new article and for a later edit.
 
-1. `datenn-si/posts` runs `.github/workflows/new-post.yml` and starts `Update posts` in this repository with that commit's SHA. A push event includes at most 20 commits, so an older `post:` commit in a longer push is not detected.
+1. `datenn-si/posts` runs `.github/workflows/post.yml` and starts `Update posts` in this repository with that commit's SHA. A push event includes at most 20 commits, so an older `post:` commit in a longer push is not detected.
 2. `update-posts.yml` opens a pull request from `posts/update-<sha>` that points the submodule at that SHA.
 3. CI runs on the pull request. When it succeeds, `merge-posts.yml` merges the pull request with a merge commit.
 4. The merge pushes `main`, and Deploy publishes the site.

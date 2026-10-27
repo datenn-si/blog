@@ -94,4 +94,4 @@ Consult these guides before working on related tasks:
 - `.github/workflows/ci.yml` — pull request checks
 - `.github/workflows/deploy.yml` — production build and deploy
 - `.github/workflows/update-posts.yml` and `merge-posts.yml` — posts submodule pull request and merge
-- `posts/.github/workflows/new-post.yml` — starts the posts update from `datenn-si/posts`
+- `posts/.github/workflows/post.yml` — starts the posts update from `datenn-si/posts`
