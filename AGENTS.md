@@ -37,13 +37,16 @@ This project uses pnpm and Node 22.13+ (`package.json`):
 - Check formatting without fixing: `pnpm fmt:check`
 - Deploy to Cloudflare Workers: `pnpm deploy`
 
-CI runs the same checks on pull requests and pushes to `main`:
+CI (`.github/workflows/ci.yml`) runs on pull requests to `main`:
 
 - `pnpm lint`
 - `pnpm fmt:check`
+- `pnpm test`
 - `pnpm build`
 
-There is no dedicated test suite in this repo. For a focused validation pass, prefer:
+Deploy (`.github/workflows/deploy.yml`) runs on pushes to `main`: `pnpm build`, then `pnpm deploy`.
+
+Tests use Node's built-in runner (`node --experimental-strip-types --test`) and live under `src/`. For a focused validation pass, prefer:
 
 - `pnpm lint` for component/script/style changes
 - `pnpm build` for MDX/posts/routes/content changes
@@ -79,7 +82,7 @@ Consult these guides before working on related tasks:
 ## Repository-specific conventions
 
 - The site is Japanese-first; project docs and user-facing text are written in Japanese unless a specific file is intentionally bilingual.
-- The README explicitly states: run lint, format, and build before committing; CI enforces this.
+- The README explicitly states: run lint, format, and build before committing. Pull request CI also runs those checks and the test script.
 - `public/` is for static assets such as favicon, manifest, OG images, and site files.
 - `resource/` is reserved for excluded or separately licensed content and should not be treated like normal source code.
 - Use the existing Astro/MDX/Tailwind stack; avoid introducing alternative frameworks or build systems unless a task explicitly requires them.
@@ -87,5 +90,8 @@ Consult these guides before working on related tasks:
 ## Useful references
 
 - `README.md` — repo overview and project rules
-- `AGENTS.md` / `CLAUDE.md` — repo-specific guidance for local dev workflow
-- `.github/workflows/ci-cd.yml` — exact CI commands and deployment behavior
+- `AGENTS.md` — repo-specific guidance for local dev workflow
+- `.github/workflows/ci.yml` — pull request checks
+- `.github/workflows/deploy.yml` — production build and deploy
+- `.github/workflows/update-posts.yml` and `merge-posts.yml` — posts submodule pull request and merge
+- `posts/.github/workflows/new-post.yml` — starts the posts update from `datenn-si/posts`

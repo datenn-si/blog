@@ -1,6 +1,7 @@
 # blog
 
-[![CI/CD](https://github.com/datenn-si/blog/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/datenn-si/blog/actions/workflows/ci-cd.yml)
+[![CI](https://github.com/datenn-si/blog/actions/workflows/ci.yml/badge.svg)](https://github.com/datenn-si/blog/actions/workflows/ci.yml)
+[![Deploy](https://github.com/datenn-si/blog/actions/workflows/deploy.yml/badge.svg)](https://github.com/datenn-si/blog/actions/workflows/deploy.yml)
 
 [ English | [日本語](README.ja.md) ]
 
@@ -28,10 +29,10 @@ Articles are managed separately in the [`datenn-si/posts`](https://github.com/da
 ```text
 ├── .github/
 │   └── workflows/
-│       └── ci-cd.yml            # CI, build, and deployment
-├── posts/                       # Blog posts
-│   └── yyyy-mm-dd-slug/
-│       └── README.mdx           # Post body. yyyy-mm-dd is the publish date
+│       ├── ci.yml               # Lint, format, test, and build on pull requests to main
+│       ├── deploy.yml           # Build and deploy on push to main
+│       ├── update-posts.yml     # Open a pull request that updates the posts submodule
+│       └── merge-posts.yml      # Merge that pull request after CI succeeds
 ├── public/                      # Public files such as favicon, OG images, and manifest
 ├── src/
 │   ├── assets/                  # Images and other assets
@@ -58,7 +59,9 @@ Articles are managed separately in the [`datenn-si/posts`](https://github.com/da
 │   │   │   │   └── [...page].astro          # Posts in a year and month
 │   │   │   └── index.astro      # Years and months that have posts
 │   │   ├── posts/
-│   │   │   └── [slug].astro     # Post page
+│   │   │   └── [slug]/
+│   │   │       ├── index.astro      # Post page
+│   │   │       └── og-image.json.ts # JSON for OGP Image Generation
 │   │   ├── privacy.md           # Privacy policy
 │   │   └── tags/
 │   │       ├── [tag]/
@@ -79,11 +82,48 @@ Articles are managed separately in the [`datenn-si/posts`](https://github.com/da
 
 `[...page]` is the page number. Page 1 has no number in the URL. Later pages are `/2`, `/3`, and so on.
 
-## Development Rules
+## Development
 
-- Run lint, format, and build before committing.
-  - Husky and lint-staged are not currently used.
-- CI also runs the same checks.
+Work on a `feature` or `fix` branch. Merge into `main` only through a pull request.
+
+- Before committing, run lint, format, and build.
+  - Husky and lint-staged are not used.
+- A pull request to `main` runs CI: lint, format, test, and build (`.github/workflows/ci.yml`).
+- A push to `main` runs Deploy: build, then deploy to Cloudflare Workers (`.github/workflows/deploy.yml`).
+
+## Updating articles
+
+Articles live in the [`datenn-si/posts`](https://github.com/datenn-si/posts) submodule. A push to `main` there publishes when one of its commits has a subject line that starts with `post:`. Use that prefix for a new article and for a later edit.
+
+1. `datenn-si/posts` runs `.github/workflows/new-post.yml` and starts `Update posts` in this repository with that commit's SHA. A push event includes at most 20 commits, so an older `post:` commit in a longer push is not detected.
+2. `update-posts.yml` opens a pull request from `posts/update-<sha>` that points the submodule at that SHA.
+3. CI runs on the pull request. When it succeeds, `merge-posts.yml` merges the pull request with a merge commit.
+4. The merge pushes `main`, and Deploy publishes the site.
+
+`pnpm new-post` in the posts repository creates a folder and a `README.mdx` file. It does not create the commit. Start the commit subject with `post:`, for example `post: cloudflare-free-disable-jsd`. To publish a SHA whose subject does not use that prefix, open the Actions tab, run `Update posts`, and pass the SHA.
+
+`posts/update-*` branches are reserved for this automation. After CI succeeds, the merge workflow merges a pull request from that branch only when the pull request comes from this repository and its head is still the commit CI checked.
+
+If another `post:` push arrives before that pull request merges, the later pull request can conflict on the submodule pointer. Merge the older pull request first.
+
+### Secrets
+
+Deploy uses `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets.
+
+Article updates use one fine-grained personal access token, stored as two Actions secrets. Create it from [Fine-grained personal access tokens](https://github.com/settings/personal-access-tokens/new) for resource owner `datenn-si`, with access only to the `blog` repository:
+
+- Actions: Read and write
+- Contents: Read and write
+- Pull requests: Read and write
+
+| Secret                | Repository        | Use                                                        |
+| --------------------- | ----------------- | ---------------------------------------------------------- |
+| `BLOG_DISPATCH_TOKEN` | `datenn-si/posts` | Start `Update posts`                                       |
+| `POSTS_UPDATE_TOKEN`  | `datenn-si/blog`  | Push `posts/update-*`, open the pull request, and merge it |
+
+The same token value goes in both secrets. Fine-grained tokens expire. After you rotate the token, replace both secrets.
+
+`GITHUB_TOKEN` stays limited to reading this repository. The posts workflow needs `BLOG_DISPATCH_TOKEN` to start a workflow in this repository. The update and merge workflows need `POSTS_UPDATE_TOKEN` so the pull request and the merge push start CI and Deploy. The posts checkout during those runs uses the public repository URL, so this token is not granted access to `datenn-si/posts`. If that repository becomes private, give the token contents read on `posts` and authenticate the submodule fetch.
 
 ## License
 

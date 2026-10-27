@@ -1,0 +1,71 @@
+name: Merge posts update
+
+on:
+  workflow_run:
+    workflows: ['CI']
+    types: [completed]
+
+permissions:
+  contents: read
+
+jobs:
+  merge:
+    name: Merge pull request
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      startsWith(github.event.workflow_run.head_branch, 'posts/update-')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge the pull request
+        env:
+          GH_TOKEN: ${{ secrets.POSTS_UPDATE_TOKEN }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          if [[ ! "$BRANCH" =~ ^posts/update-[0-9a-f]{12}$ ]]; then
+            echo "Branch ${BRANCH} is outside the posts update pattern"
+            exit 0
+          fi
+          head_sha=$(printf '%s' "$HEAD_SHA" | tr '[:upper:]' '[:lower:]')
+          if [[ ! "$head_sha" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "Unexpected head SHA"
+            exit 1
+          fi
+
+          numbers=$(gh pr list \
+            --repo "$GITHUB_REPOSITORY" \
+            --head "$BRANCH" \
+            --base main \
+            --state open \
+            --json number \
+            --jq '.[].number')
+          if [ -z "$numbers" ]; then
+            echo "No open pull request for ${BRANCH}"
+            exit 0
+          fi
+
+          number=""
+          for candidate in $numbers; do
+            read -r repo sha < <(gh api "repos/${GITHUB_REPOSITORY}/pulls/${candidate}" --jq '[.head.repo.full_name, .head.sha] | @tsv')
+            if [ "$repo" = "$GITHUB_REPOSITORY" ] && [ "$sha" = "$head_sha" ]; then
+              number=$candidate
+              break
+            fi
+          done
+          if [ -z "$number" ]; then
+            echo "No same-repository pull request at ${head_sha}"
+            exit 0
+          fi
+
+          for _ in 1 2 3 4 5; do
+            if gh pr merge "$number" --repo "$GITHUB_REPOSITORY" --merge --delete-branch; then
+              exit 0
+            fi
+            merged=$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${number}" --jq '.merged')
+            if [ "$merged" = "true" ]; then
+              exit 0
+            fi
+            sleep 10
+          done
+          exit 1
