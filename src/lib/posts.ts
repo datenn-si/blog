@@ -51,6 +51,11 @@ export function postPath(id: string): string {
   return `/posts/${encodeURIComponent(id)}/`;
 }
 
+export function postMarkdownUrl(post: Post): string {
+  const folder = `${formatPostDateIso(post.data.published)}-${encodeURIComponent(post.id)}`;
+  return `https://raw.githubusercontent.com/datenn-si/posts/main/${folder}/README.mdx`;
+}
+
 export function tagPath(tag: string): string {
   return `/tags/${encodeURIComponent(tag)}/`;
 }
@@ -159,5 +164,5 @@ export function groupArchive(posts: Post[]): YearArchive[] {
 }
 
 export function addPageNumber(text: string, currentPage: number, lastPage: number): string {
-  return `${text}${/」|。/.test(text.slice(-1)) ? '' : ' '}(ページ ${currentPage}/${lastPage})`;
+  return `${text}${/[」。）]$/.test(text) ? '' : ' '}(ページ ${currentPage}/${lastPage})`;
 }

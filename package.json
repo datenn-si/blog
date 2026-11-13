@@ -18,20 +18,20 @@
     "test": "node --experimental-strip-types --test"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^14.3.4",
-    "@astrojs/mdx": "^8.1.0",
+    "@astrojs/cloudflare": "14.4.7",
+    "@astrojs/mdx": "8.1.5",
     "@astrojs/sitemap": "^3.7.4",
     "@resvg/resvg-wasm": "^2.6.2",
     "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.3.3",
-    "astro": "^7.3.8",
+    "astro": "7.4.11",
     "budoux": "^0.9.3",
     "photoswipe": "^5.4.4",
     "satori": "^0.62.0",
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
-    "@astrojs/markdown-remark": "^7.3.3",
+    "@astrojs/markdown-remark": "7.3.8",
     "@iconify/json": "^2.2.541",
     "@iconify/tailwind4": "^1.2.3",
     "@pagefind/component-ui": "^1.5.2",
@@ -47,7 +47,7 @@
     "remark-gfm": "^4.0.1",
     "remark-github-alerts": "^0.1.1",
     "remark-link-card-plus": "^0.8.1",
-    "wrangler": "^4.149.0"
+    "wrangler": "^4.160.0"
   },
   "engines": {
     "node": ">=22.13.0"
