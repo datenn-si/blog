@@ -77,7 +77,7 @@ export const socialLinks: {
   },
   {
     name: 'Civitai',
-    url: 'https://civitai.red/user/datenn_si',
+    url: 'https://civitai.com/user/datenn_si',
     iconClass: 'icon-[thesvg--civitai]',
   },
   {

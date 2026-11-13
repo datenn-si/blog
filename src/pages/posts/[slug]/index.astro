@@ -4,6 +4,7 @@ import type { GetStaticPaths } from "astro";
 
 import AuthorCard from "@/components/AuthorCard.astro";
 import Comments from "@/components/Comments.astro";
+import MarkdownMenu from "@/components/MarkdownMenu.astro";
 import PostCard from "@/components/PostCard.astro";
 import PostMeta from "@/components/PostMeta.astro";
 import ShareButtons from "@/components/ShareButtons.astro";
@@ -46,6 +47,9 @@ const lastUpdated = post.data.updated ?? post.data.published;
     <div data-pagefind-ignore>
       <StalePostWarning date={lastUpdated} />
       <PostMeta post={post} variant="page" />
+      <div class="mt-3 flex justify-start">
+        <MarkdownMenu post={post} />
+      </div>
     </div>
     <div
       class="prose prose-sm mt-6 max-w-none text-ink dark:prose-invert [--tw-prose-body:var(--color-ink)] [--tw-prose-headings:var(--color-ink)] [--tw-prose-counters:var(--color-ink)] [--tw-prose-bullets:var(--color-ink)] [--tw-prose-links:var(--color-accent)] prose-headings:scroll-mt-16"

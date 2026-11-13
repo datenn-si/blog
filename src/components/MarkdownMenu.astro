@@ -1,0 +1,170 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+import { postMarkdownUrl } from "@/lib/posts";
+
+type Props = {
+  post: CollectionEntry<"posts">;
+};
+
+const { post } = Astro.props;
+const markdownUrl = postMarkdownUrl(post);
+---
+
+<details class="md-menu relative" data-md-menu>
+  <summary
+    class="list-none bg-surface text-ink select-none [&::-webkit-details-marker]:hidden inline-flex items-center rounded-control border border-line text-sm font-medium"
+    aria-haspopup="menu"
+  >
+    <div class="cursor-pointer hover:bg-canvas h-8 px-2 py-1 flex items-center gap-2 rounded-l-control" data-md-copy data-prevent-open data-md-url={markdownUrl}>
+      <span class="icon-[mdi--check] hidden" aria-hidden="true" id="md-copy-check"></span>
+      Markdown をコピー
+    </div>
+    <div class="cursor-pointer hover:bg-canvas h-8 px-2 py-1 flex items-center rounded-r-control">
+      <span
+        class="icon-[mdi--chevron-down] text-base"
+        aria-hidden="true"></span>
+    </div>
+  </summary>
+  <div
+    class="absolute top-[calc(100%+0.5rem)] -left-2 z-50 flex w-80 max-w-[calc(100vw-2rem)] flex-col gap-0.5 rounded-card border border-line bg-surface p-1.5 shadow-lg"
+    role="menu"
+  >
+    <button
+      class="md-menu-item"
+      type="button"
+      role="menuitem"
+      data-md-copy
+      data-md-url={markdownUrl}
+      hidden
+    >
+      <span
+        class="icon-[mdi--content-copy] mt-0.5 shrink-0 text-lg text-muted"
+        aria-hidden="true"></span>
+      <span class="flex min-w-0 flex-col">
+        <span class="text-sm font-medium text-ink" data-md-copy-label
+          >Markdownをコピー</span
+        >
+        <span class="text-xs text-muted">任意の LLM で使用する</span>
+      </span>
+    </button>
+    <a
+      class="md-menu-item"
+      role="menuitem"
+      href={markdownUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-md-view
+    >
+      <span
+        class="icon-[mdi--file-document-outline] mt-0.5 shrink-0 text-lg text-muted"
+        aria-hidden="true"></span>
+      <span class="flex min-w-0 flex-col">
+        <span class="with-icon text-sm font-medium text-ink">
+          マークダウンとして表示
+          <span class="icon-[mdi--open-in-new] text-xs" aria-hidden="true"
+          ></span>
+        </span>
+        <span class="text-xs text-muted">別のタブでページを開く</span>
+      </span>
+    </a>
+    <button
+      class="md-menu-item"
+      type="button"
+      role="menuitem"
+      data-md-copy-link
+      data-md-url={markdownUrl}
+      hidden
+    >
+      <span
+        class="icon-[mdi--link-variant] mt-0.5 shrink-0 text-lg text-muted"
+        aria-hidden="true"></span>
+      <span class="flex min-w-0 flex-col">
+        <span class="text-sm font-medium text-ink" data-md-copy-link-label
+          >マークダウンへのリンクをコピー</span
+        >
+        <span class="text-xs text-muted">GitHub の raw ファイルへのリンク</span>
+      </span>
+    </button>
+  </div>
+</details>
+
+<style>
+  @reference "@/styles/global.css";
+
+  .md-menu-item {
+    @apply flex cursor-pointer gap-3 rounded-control px-3 py-2 text-left hover:bg-line/40;
+  }
+</style>
+
+<script>
+  const menu = document.querySelector<HTMLDetailsElement>("[data-md-menu]");
+
+  if (menu) {
+    const close = () => {
+      menu.open = false;
+    };
+
+    document.addEventListener("click", (event) => {
+      if (menu.open && !menu.contains(event.target as Node)) close();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") close();
+    });
+    menu
+      .querySelector("[data-md-view]")
+      ?.addEventListener("click", () => close());
+
+    const showFeedback = (
+    ) => {
+      const checkIcon = document.getElementById("md-copy-check");
+      if (checkIcon) {
+        checkIcon.classList.remove("hidden");
+      }
+      window.setTimeout(() => {
+        if (checkIcon) {
+          checkIcon.classList.add("hidden");
+        }
+      }, 1200);
+    };
+
+    if (typeof navigator.clipboard?.writeText === "function") {
+      const copyButton = menu.querySelectorAll<HTMLButtonElement>("[data-md-copy]");
+      if (copyButton) {
+        copyButton.forEach((btn) => {
+          btn.hidden = false;
+          btn.addEventListener("click", async (e) => {
+            if (btn.dataset.preventOpen !== undefined) {
+              e.preventDefault();
+            }
+            try {
+              const response = await fetch(btn.dataset.mdUrl ?? "");
+              if (!response.ok) throw new Error("fetch failed");
+              await navigator.clipboard.writeText(await response.text());
+              showFeedback();
+              if (btn.dataset.preventOpen !== undefined) return;
+              close();
+            } catch {
+            }
+          });
+        });
+      }
+
+      const copyLinkButton =
+        menu.querySelector<HTMLButtonElement>("[data-md-copy-link]");
+      if (copyLinkButton) {
+        copyLinkButton.hidden = false;
+        copyLinkButton.addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeText(
+              copyLinkButton.dataset.mdUrl ?? "",
+            );
+            showFeedback();
+            close();
+          } catch {
+          }
+        });
+      }
+    }
+  }
+</script>
