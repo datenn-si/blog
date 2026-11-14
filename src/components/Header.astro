@@ -170,7 +170,7 @@ const themeOptions = [
 
   pagefind-modal:not(:defined),
   pagefind-config:not(:defined) {
-    display: none;
+    @apply hidden;
   }
 
   header:has(#site-navigation:popover-open) .menu-open {
@@ -194,12 +194,11 @@ const themeOptions = [
 
   @media (hover: none) {
     pagefind-modal-footer {
-      display: none !important;
+      @apply hidden!;
     }
 
     pagefind-modal-body {
-      border-bottom-left-radius: 12px !important;
-      border-bottom-right-radius: 12px !important;
+      @apply rounded-b-[12px]!;
     }
   }
 
