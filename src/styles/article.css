@@ -25,7 +25,7 @@
 }
 
 .pswp--touch-input .pswp__button--zoom {
-  display: none !important;
+  @apply hidden!;
 }
 
 .pswp__button--fullscreen[aria-pressed='true'] .pswp__fullscreen-icon-enter,
@@ -33,12 +33,42 @@
   @apply hidden;
 }
 
+.prose {
+  --toc-sticky-gap: 0.75rem;
+  --toc-max-height: min(24rem, 45dvh);
+}
+
+.prose .toc-placeholder {
+  @apply m-0 mb-6 p-0;
+}
+
 .prose .toc-shell {
-  @apply my-6 overflow-hidden rounded-card border border-line bg-surface/90;
+  @apply z-40 mx-auto mt-0 mb-6 flex w-[calc(100%-2rem)] flex-col overflow-clip rounded-card border border-line bg-surface shadow-sm;
+  max-height: var(--toc-shell-height, none);
+  transition: max-height 250ms ease;
+}
+
+.prose .toc-shell.toc-boot-pending {
+  visibility: hidden;
+}
+
+.prose .toc-shell.is-floating {
+  @apply fixed m-0 shadow-md;
+  top: calc(3rem + var(--toc-sticky-gap));
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+.prose .toc-shell.is-floating.is-shown {
+  opacity: 1;
 }
 
 .prose .toc-summary {
-  @apply flex cursor-pointer list-none items-center gap-2 bg-line/30 px-4 py-3 font-bold text-ink;
+  @apply flex shrink-0 cursor-pointer list-none items-center gap-2 bg-line/30 px-4 py-3 font-bold text-ink;
+}
+
+.prose :is(h1, h2, h3, h4, h5, h6) {
+  scroll-margin-top: calc(3rem + var(--toc-sticky-gap) + var(--toc-sticky-height, 0px) + 0.5rem);
 }
 
 .prose .toc-summary::-webkit-details-marker {
@@ -49,12 +79,27 @@
   @apply ml-auto text-lg transition-transform duration-150;
 }
 
-.prose .toc-shell:not([open]) .toc-chevron {
-  @apply -rotate-180;
+.prose .toc-shell[open] .toc-chevron {
+  @apply rotate-180;
 }
 
 .prose .toc {
-  @apply m-0 px-4 pt-2 pb-4;
+  @apply m-0 min-h-0 rounded-b-[calc(var(--radius-card)-1px)] px-4 pt-2 pb-4;
+  max-height: var(--toc-list-height, none);
+}
+
+.prose .toc.is-scrollable {
+  @apply overflow-y-auto;
+}
+
+.prose .toc-shell.is-floating .toc {
+  max-height: calc(min(var(--toc-list-height), var(--toc-max-height) - 3rem - 2px));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prose .toc-shell {
+    @apply transition-none;
+  }
 }
 
 .prose :not(.toc) > .toc-list {
