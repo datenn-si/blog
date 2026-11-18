@@ -4,6 +4,7 @@ type Props = {
   description?: string;
   ogImagePath?: string;
   noIndex?: boolean;
+  tocBoot?: boolean;
 };
 
 import { Font } from "astro:assets";
@@ -11,11 +12,12 @@ import { Font } from "astro:assets";
 import "@/styles/global.css";
 import { siteConfig } from "@/constants";
 import { themeBootScript } from "@/lib/theme-boot";
+import { tocBootScript } from "@/lib/toc-boot";
 
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 
-const { title, description, ogImagePath, noIndex } = Astro.props;
+const { title, description, ogImagePath, noIndex, tocBoot } = Astro.props;
 
 const titleTemplate =
   Astro.url.pathname === "/" ? title : `${title} | ${siteConfig.siteName}`;
@@ -29,6 +31,7 @@ const ogImageUrl = new URL(
   <head>
     <meta charset="utf-8" />
     <script is:inline set:html={themeBootScript} />
+    {tocBoot && <script is:inline set:html={tocBootScript} />}
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="shortcut icon" href="/favicon.ico" />

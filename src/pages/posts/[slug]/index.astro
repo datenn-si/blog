@@ -39,6 +39,7 @@ const lastUpdated = post.data.updated ?? post.data.published;
   title={post.data.title}
   description={description || undefined}
   ogImagePath={`/posts/${encodeURIComponent(post.id)}/og-image.png`}
+  tocBoot
 >
   <article data-pagefind-body>
     <h1 class="text-2xl font-bold">

@@ -9,7 +9,7 @@ type Props = {
 const { frontmatter } = Astro.props;
 ---
 
-<Layout title={frontmatter.title} description={frontmatter.description}>
+<Layout title={frontmatter.title} description={frontmatter.description} tocBoot>
   <article>
     <h1 class="text-2xl font-bold">{frontmatter.title}</h1>
     <div

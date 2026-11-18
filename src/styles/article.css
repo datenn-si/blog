@@ -38,29 +38,29 @@
   --toc-max-height: min(24rem, 45dvh);
 }
 
-.prose .toc-sentinel {
-  @apply m-0 h-0 border-0 p-0;
+.prose .toc-placeholder {
+  @apply m-0 mb-6 p-0;
 }
 
 .prose .toc-shell {
-  @apply sticky top-[calc(3rem+var(--toc-sticky-gap))] z-40 mx-auto mt-0 mb-6 flex w-[calc(100%-2rem)] flex-col overflow-clip rounded-card border border-line bg-surface shadow-sm;
-  max-height: var(--toc-full-height, none);
+  @apply z-40 mx-auto mt-0 mb-6 flex w-[calc(100%-2rem)] flex-col overflow-clip rounded-card border border-line bg-surface shadow-sm;
+  max-height: var(--toc-shell-height, none);
   transition: max-height 250ms ease;
 }
 
-.prose .toc-shell.is-stuck {
-  max-height: min(var(--toc-full-height), var(--toc-max-height));
+.prose .toc-shell.toc-boot-pending {
+  visibility: hidden;
 }
 
-.prose .toc-spacer {
-  height: var(--toc-rest-spacer, 0px);
-  transition: height 250ms ease;
+.prose .toc-shell.is-floating {
+  @apply fixed m-0 shadow-md;
+  top: calc(3rem + var(--toc-sticky-gap));
+  opacity: 0;
+  transition: opacity 160ms ease;
 }
 
-.prose .toc-shell.is-stuck + .toc-spacer {
-  height: calc(
-    var(--toc-rest-spacer, 0px) + max(0px, var(--toc-full-height) - var(--toc-max-height))
-  );
+.prose .toc-shell.is-floating.is-shown {
+  opacity: 1;
 }
 
 .prose .toc-summary {
@@ -79,28 +79,25 @@
   @apply ml-auto text-lg transition-transform duration-150;
 }
 
-.prose .toc-shell:not([open]) .toc-chevron {
-  @apply -rotate-180;
+.prose .toc-shell[open] .toc-chevron {
+  @apply rotate-180;
 }
 
 .prose .toc {
   @apply m-0 min-h-0 rounded-b-[calc(var(--radius-card)-1px)] px-4 pt-2 pb-4;
   max-height: var(--toc-list-height, none);
-  transition: max-height 250ms ease;
 }
 
 .prose .toc.is-scrollable {
   @apply overflow-y-auto;
 }
 
-.prose .toc-shell.is-stuck .toc {
+.prose .toc-shell.is-floating .toc {
   max-height: calc(min(var(--toc-list-height), var(--toc-max-height) - 3rem - 2px));
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .prose .toc-shell,
-  .prose .toc,
-  .prose .toc-spacer {
+  .prose .toc-shell {
     @apply transition-none;
   }
 }
